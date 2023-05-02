@@ -1,5 +1,5 @@
 # Frostbyte
-A simple chess engine programmed in C
+A custom chess engine, written in C. This was inspired by my school project to build a ches program. I wanted to improve upon it by optimizing memory usage and also making a more 'intelligent' AI to play against the user.
 
 ## Goals
  - Make an optimized chess engine
