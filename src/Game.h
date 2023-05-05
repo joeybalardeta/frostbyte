@@ -15,4 +15,8 @@ Game *CreateGame(Player *player_white, Player *player_black);
 
 void DeleteGame(Game *game);
 
+void AddPiece(Game *game, Piece *piece, char rank, char file);
+
+void RemovePiece(Game *game, char rank, char file);
+
 #endif
