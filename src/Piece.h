@@ -16,4 +16,6 @@ void DeletePiece(Piece *piece);
 
 void PromotePiece(Piece *piece, PieceType type);
 
+char *PieceToString(Piece *piece);
+
 #endif

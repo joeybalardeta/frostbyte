@@ -13,7 +13,7 @@ $(OBJ)%.o: $(SRC)%.c
 	$(COMPILE) -c $< -o $@
 
 all: $(OBJS)
-	$(COMPILE) $(SRC)frostbyte.c -o $(BIN)frostbyte
+	$(COMPILE) $(OBJS) -o $(BIN)frostbyte
 
 clean_obj:
 	rm -f $(OBJ)*.o
