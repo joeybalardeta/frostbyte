@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "Player.h"
 
-Player *CreatePlayer(PlayerType type) {
+Player *CreatePlayer(unsigned char type) {
 	Player *player = (Player *) malloc(sizeof(Player));
 	player->type = type;
 

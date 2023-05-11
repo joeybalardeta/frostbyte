@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "Piece.h"
 
-Piece *CreatePiece(PieceColor color, PieceType type) {
+Piece *CreatePiece(unsigned char color, unsigned char type) {
 	Piece *piece = (Piece *) malloc(sizeof(Piece));
 	piece->color = color;
 	piece->type = type;
@@ -15,7 +15,7 @@ void DeletePiece(Piece *piece) {
 	}
 }
 
-void PromotePiece(Piece *piece, PieceType type) {
+void PromotePiece(Piece *piece, unsigned char type) {
 	piece->type = type;
 }
 

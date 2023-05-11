@@ -1,10 +1,18 @@
-typedef enum {COMPUTER = 0, PLAYER} PlayerType;
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#define WHITE 0
+#define BLACK 1
+
+#define COMPUTER 0
+#define USER 1
 
 typedef struct {
-	PlayerType type;
-
+	unsigned char type;
 } Player;
 
-Player *CreatePlayer(PlayerType type);
+Player *CreatePlayer(unsigned char type);
 
 void DeletePlayer(Player *player);
+
+#endif

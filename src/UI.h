@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "Game.h"
+#include "Move.h"
 
 void PrintMenu();
 
@@ -13,5 +14,7 @@ void UILoop();
 void PrintBoard(Game *game);
 
 void PrintBoardR(Game *game);
+
+Move *GetMove(Game *game, unsigned char color);
 
 #endif

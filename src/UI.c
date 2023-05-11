@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include "UI.h"
 
 void PrintMenu() {
@@ -65,7 +66,9 @@ void UILoop() {
 	int user_input = 0;
 	while (user_input != 6) {
 		PrintMenu();
-		scanf("%d", &user_input);
+		while (!(scanf("%d", &user_input) > 0)) {
+			;
+		}
 		ProcessInput(user_input);
 	}
 }
@@ -119,4 +122,50 @@ void PrintBoardR(Game *game) {
 
     printf("  +----+----+----+----+----+----+----+----+\n");
     printf("    H    G    F    E    D    C    B    A\n");
-}	
+}
+
+Move *GetMove(Game *game, unsigned char color) {
+	unsigned char from_rank;
+	unsigned char from_file;
+
+	unsigned char to_rank;
+	unsigned char to_file;
+
+	unsigned int iteration = 0;
+
+	do {
+
+		char buffer [1000];
+		bzero(buffer, 1000);		
+
+		if (iteration) {
+			printf("Incorrect move format!\n\n");
+		}
+
+		printf("Enter move (for format enter '-f'): ");
+
+		scanf("%s", buffer);
+		sscanf(buffer, "%c%c,%c%c", &from_rank, &from_file, &to_rank, &to_file);
+
+		if (from_rank == '-' && from_file == 'f') {
+			printf("\nMove format: starting square,ending square\n");
+			printf("Starting square - the square of the piece you would like to move.\n");
+			printf("Ending square - the square you would like to move to.\n\n");
+			printf("Example - 'e2,e4'\n\n");
+		}
+		else {
+			from_rank = from_rank - 'a';
+			from_file = from_file  - '1';
+			to_rank = to_rank - 'a';
+			to_file = to_file - '1';
+
+			iteration++;
+		}		
+
+	} while (!(from_rank < 8 && from_file < 8 && to_rank < 8 && to_file < 8));
+
+	Move *move = CreateMove(from_rank, from_file, to_rank, to_file);
+
+	return move;
+}
+

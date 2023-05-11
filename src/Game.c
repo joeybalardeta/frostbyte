@@ -60,6 +60,13 @@ void DeleteGame(Game *game) {
 			RemovePiece(game, i, j);
 		}
 	}
+
+	DeletePlayer(game->player_white);
+	game->player_white = NULL;
+
+	DeletePlayer(game->player_black);
+	game->player_black = NULL;
+
 	if (game) {
 		free(game);
 	}
