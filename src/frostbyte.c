@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "Game.h"
-#include "Player.h"
 #include "UI.h"
+#include "Move.h"
+#include "MoveList.h"
 
 int main(int argc, char **argv) {
 	UILoop();
