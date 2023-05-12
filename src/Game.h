@@ -3,6 +3,7 @@
 
 #include "Piece.h"
 #include "Player.h"
+#include "Move.h"
 
 typedef struct {
 	Piece* board[8][8];
@@ -19,6 +20,6 @@ void AddPiece(Game *game, Piece *piece, unsigned char rank, unsigned char file);
 
 void RemovePiece(Game *game, unsigned char rank, unsigned char file);
 
-void MovePiece(Game *game, unsigned char from_rank, unsigned char from_file, unsigned char to_rank, unsigned char to_file);
+void MovePiece(Game *game, Move *move);
 
 #endif

@@ -15,6 +15,8 @@ void PrintBoard(Game *game);
 
 void PrintBoardR(Game *game);
 
-Move *GetMove(Game *game, unsigned char color);
+Move *GetUserMove(Game *game, unsigned char color);
+
+void GameLoop(Game *game);
 
 #endif

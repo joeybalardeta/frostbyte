@@ -84,10 +84,10 @@ void RemovePiece(Game *game, unsigned char rank, unsigned char file) {
 }
 
 
-void MovePiece(Game *game, unsigned char from_rank, unsigned char from_file, unsigned char to_rank, unsigned char to_file) {
-	RemovePiece(game, to_rank, to_file);
-	game->board[to_rank][to_file] = game->board[from_rank][from_file];
-	game->board[from_rank][from_file] = NULL;
+void MovePiece(Game *game, Move *move) {
+	RemovePiece(game, move->to_rank, move->to_file);
+	game->board[move->to_rank][move->to_file] = game->board[move->from_rank][move->from_file];
+	game->board[move->from_rank][move->from_file] = NULL;
 
 }
 

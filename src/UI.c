@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include "UI.h"
+#include "Player.h"
 
 void PrintMenu() {
 	printf("Choose an option:\n\n");
@@ -22,6 +23,9 @@ void ProcessInput(int input) {
 		case 1:
 		{
 			printf("Starting Player vs. Player\n\n");
+			Game *game = CreateGame(CreatePlayer(USER), CreatePlayer(USER));
+			GameLoop(game);
+			DeleteGame(game);
 			break;
 		}
 
@@ -124,7 +128,7 @@ void PrintBoardR(Game *game) {
     printf("    H    G    F    E    D    C    B    A\n");
 }
 
-Move *GetMove(Game *game, unsigned char color) {
+Move *GetUserMove(Game *game, unsigned char color) {
 	unsigned char from_rank;
 	unsigned char from_file;
 
@@ -142,7 +146,7 @@ Move *GetMove(Game *game, unsigned char color) {
 			printf("Incorrect move format!\n\n");
 		}
 
-		printf("Enter move (for format enter '-f'): ");
+		printf("\nEnter move (for format enter '-f'): ");
 
 		scanf("%s", buffer);
 		sscanf(buffer, "%c%c,%c%c", &from_rank, &from_file, &to_rank, &to_file);
@@ -166,6 +170,31 @@ Move *GetMove(Game *game, unsigned char color) {
 
 	Move *move = CreateMove(from_rank, from_file, to_rank, to_file);
 
+	printf("\n\n");
+
 	return move;
 }
 
+void GameLoop(Game *game) {
+	while(1) {
+		if (game->player_white->type == USER) {
+			PrintBoard(game);
+			Move *move = GetUserMove(game, WHITE);
+			MovePiece(game, move);
+			DeleteMove(move);
+		}
+		else {
+			;
+		}
+		
+		if (game->player_black->type == USER) {
+			PrintBoardR(game);
+			Move *move = GetUserMove(game, BLACK);
+			MovePiece(game, move);
+			DeleteMove(move);
+		}
+		else {
+			;
+		}
+	}
+}
