@@ -5,6 +5,7 @@ Piece *CreatePiece(unsigned char color, unsigned char type) {
 	Piece *piece = (Piece *) malloc(sizeof(Piece));
 	piece->color = color;
 	piece->type = type;
+	piece->moveCount = 0;
 
 	return piece;
 }

@@ -3,6 +3,7 @@
 
 #include "Game.h"
 #include "Move.h"
+#include "MoveList.h"
 
 int ValidateUserMove(Game *game, Move *move, unsigned char color);
 
@@ -15,5 +16,7 @@ int IsObstructed(Game *game, Move *move, unsigned char color);
 int IsInCheck(Game *game, unsigned char color);
 
 int IsCheckmated(Game *game, unsigned char color);
+
+MLIST *GenerateLegalMoves(Game *game, Piece *piece, unsigned char color);
 
 #endif
