@@ -1,7 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 #include "Game.h"
 #include "Piece.h"
-#include <stdlib.h>
-#include <assert.h>
 
 Game *CreateGame(Player *player_white, Player *player_black) {
 	
@@ -9,6 +10,8 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 
 	game->player_white = player_white;
 	game->player_black = player_black;
+
+	game->lastMove = NULL;
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -81,14 +84,64 @@ void RemovePiece(Game *game, unsigned char rank, unsigned char file) {
 	if (game->board[rank][file]) {
 		DeletePiece(game->board[rank][file]);
 	}
+
+	game->board[rank][file] = NULL;
 }
 
 
 void MovePiece(Game *game, Move *move) {
+	// all of this stuff is for en passant
+	
+	Piece *piece = GetPiece(game, move->from_rank, move->from_file);
+	piece->moveCount += 1;
+
+	int move_dir;
+
+	if (piece->color == WHITE) {
+		move_dir = 1;
+	}
+	else {
+		move_dir = -1;
+	}
+
+	if (!HasPiece(game, move->to_rank, move->to_file) && piece->type == PAWN && move->from_rank != move->to_rank) {
+		RemovePiece(game, move->to_rank, move->to_file - move_dir);
+	}
+	// end of en passent code
+
+
 	RemovePiece(game, move->to_rank, move->to_file);
 	game->board[move->to_rank][move->to_file] = game->board[move->from_rank][move->from_file];
 	game->board[move->from_rank][move->from_file] = NULL;
 
+	if (game->lastMove) {
+		DeleteMove(game->lastMove);
+	}
+
+	game->lastMove = CloneMove(move);
 }
 
 
+int HasPiece(Game *game, unsigned char rank, unsigned char file) {
+	if (game->board[rank][file] != NULL) {
+		return 1;
+	}
+
+	return 0;
+}
+
+
+Piece *GetPiece(Game *game, unsigned char rank, unsigned char file) {
+	if (!HasPiece(game, rank, file)) {
+		return NULL;
+	}
+	return game->board[rank][file];
+}
+
+
+int MoveIsOnBoard(unsigned char rank, unsigned char file) {
+	if (rank < 8 && file < 8) {
+		return 1;
+	}
+	return 0;
+}

@@ -3,6 +3,7 @@
 #include <strings.h>
 #include "UI.h"
 #include "Player.h"
+#include "Rules.h"
 
 void PrintMenu() {
 	printf("Choose an option:\n\n");
@@ -137,13 +138,26 @@ Move *GetUserMove(Game *game, unsigned char color) {
 
 	unsigned int iteration = 0;
 
-	do {
+	int moveErrorCode = -3301;
 
-		char buffer [1000];
+	Move *move = NULL;
+
+	do {
+		if (move) {
+			DeleteMove(move);
+		}
+
+		char buffer[1000];
 		bzero(buffer, 1000);		
 
-		if (iteration) {
+		if (moveErrorCode == 0) {
 			printf("Incorrect move format!\n\n");
+		}
+		else if (moveErrorCode == -1) {
+			printf("No piece of user color at location!\n\n");
+		}
+		else if (moveErrorCode == -2) {
+			printf("Illegal move!\n\n");
 		}
 
 		printf("\nEnter move (for format enter '-f'): ");
@@ -156,6 +170,8 @@ Move *GetUserMove(Game *game, unsigned char color) {
 			printf("Starting square - the square of the piece you would like to move.\n");
 			printf("Ending square - the square you would like to move to.\n\n");
 			printf("Example - 'e2,e4'\n\n");
+
+			iteration = 0;
 		}
 		else {
 			from_rank = from_rank - 'a';
@@ -166,9 +182,14 @@ Move *GetUserMove(Game *game, unsigned char color) {
 			iteration++;
 		}		
 
-	} while (!(from_rank < 8 && from_file < 8 && to_rank < 8 && to_file < 8));
+		if (iteration != 0) {
+			move = CreateMove(from_rank, from_file, to_rank, to_file);
 
-	Move *move = CreateMove(from_rank, from_file, to_rank, to_file);
+			moveErrorCode = ValidateUserMove(game, move, color);
+		}
+
+	} while (moveErrorCode != 1);
+
 
 	printf("\n\n");
 

@@ -83,6 +83,11 @@ void AddMoveListEntry(MLIST *moveList, MLENTRY *moveListEntry) {
 	moveList->length += 1;
 }
 
+void AddMove(MLIST *moveList, Move *move) {
+	MLENTRY *moveListEntry = CreateMoveListEntry(move);
+	AddMoveListEntry(moveList, moveListEntry);
+}
+
 void DeleteMoveListEntry(MLENTRY *moveListEntry) {
 	assert(moveListEntry);
 	if (moveListEntry->move) {

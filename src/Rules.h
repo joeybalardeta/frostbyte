@@ -17,6 +17,6 @@ int IsInCheck(Game *game, unsigned char color);
 
 int IsCheckmated(Game *game, unsigned char color);
 
-MLIST *GenerateLegalMoves(Game *game, Piece *piece, unsigned char color);
+MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color);
 
 #endif

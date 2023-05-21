@@ -30,6 +30,8 @@ MLENTRY *CreateMoveListEntry(Move *move);
 
 void AddMoveListEntry(MLIST *moveList, MLENTRY *moveListEntry);
 
+void AddMove(MLIST *moveList, Move *move);
+
 void DeleteMoveListEntry(MLENTRY *moveListEntry);
 
 #endif

@@ -15,6 +15,10 @@ typedef struct {
 
 Move *CreateMove(unsigned char from_rank, unsigned char from_file, unsigned char to_rank, unsigned char to_file);
 
+Move *CloneMove(Move *move);
+
+int MoveEquals(Move *move1, Move *move2);
+
 void DeleteMove(Move *move);
 
 #endif

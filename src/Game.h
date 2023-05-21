@@ -9,6 +9,7 @@ typedef struct {
 	Piece* board[8][8];
 	Player *player_white;
 	Player *player_black;
+	Move *lastMove;
 
 } Game;
 
@@ -21,5 +22,11 @@ void AddPiece(Game *game, Piece *piece, unsigned char rank, unsigned char file);
 void RemovePiece(Game *game, unsigned char rank, unsigned char file);
 
 void MovePiece(Game *game, Move *move);
+
+int HasPiece(Game *game, unsigned char rank, unsigned char file);
+
+Piece *GetPiece(Game *game, unsigned char rank, unsigned char file);
+
+int MoveIsOnBoard(unsigned char rank, unsigned char file);
 
 #endif
