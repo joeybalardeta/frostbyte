@@ -27,6 +27,6 @@ int HasPiece(Game *game, unsigned char rank, unsigned char file);
 
 Piece *GetPiece(Game *game, unsigned char rank, unsigned char file);
 
-int MoveIsOnBoard(unsigned char rank, unsigned char file);
+int LocIsOnBoard(unsigned char rank, unsigned char file);
 
 #endif

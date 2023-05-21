@@ -139,7 +139,7 @@ Piece *GetPiece(Game *game, unsigned char rank, unsigned char file) {
 }
 
 
-int MoveIsOnBoard(unsigned char rank, unsigned char file) {
+int LocIsOnBoard(unsigned char rank, unsigned char file) {
 	if (rank < 8 && file < 8) {
 		return 1;
 	}
