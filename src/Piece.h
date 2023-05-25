@@ -20,6 +20,8 @@ typedef struct {
 
 Piece *CreatePiece(unsigned char color, unsigned char type);
 
+Piece *ClonePiece(Piece *piece);
+
 void DeletePiece(Piece *piece);
 
 void PromotePiece(Piece *piece, unsigned char type);

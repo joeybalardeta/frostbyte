@@ -53,6 +53,30 @@ void DeleteMoveList(MLIST *moveList) {
 	free(moveList);
 }
 
+
+
+MLIST *AddMoveLists(MLIST *destination, MLIST *source) {
+	if (destination == NULL && source != NULL) {
+		return source;
+	}
+	else if (destination == NULL) {
+		return NULL;
+	}
+	else if (source == NULL) {
+		return destination;
+	}
+
+	MLENTRY *toClone = source->first;
+
+	for (int i = 0; i < source->length; i++) {
+		AddMoveListEntry(destination, CloneMoveListEntry(toClone));
+		toClone = toClone->next;
+	}
+
+	return destination;
+}
+
+
 MLENTRY *CreateMoveListEntry(Move *move) {
 	MLENTRY *moveListEntry = (MLENTRY *) malloc(sizeof(MLENTRY));
 
@@ -64,6 +88,13 @@ MLENTRY *CreateMoveListEntry(Move *move) {
 	moveListEntry->move = move;
 
 	return moveListEntry;
+}
+
+
+MLENTRY *CloneMoveListEntry(MLENTRY *moveListEntry) {
+	MLENTRY *clonedEntry = CreateMoveListEntry(CloneMove(moveListEntry->move));
+
+	return clonedEntry;	
 }
 
 void AddMoveListEntry(MLIST *moveList, MLENTRY *moveListEntry) {
@@ -81,6 +112,20 @@ void AddMoveListEntry(MLIST *moveList, MLENTRY *moveListEntry) {
 	moveList->last = moveListEntry;
 
 	moveList->length += 1;
+}
+
+MLENTRY *GetMoveListEntry(MLIST *moveList, unsigned int index) {
+	if (index > moveList->length - 1) {
+		return NULL;
+	}
+
+	MLENTRY *moveListEntry = moveList->first;
+
+	for (int i = 0; i < index; i++) {
+		moveListEntry = moveListEntry->next;
+	}
+
+	return moveListEntry;
 }
 
 void AddMove(MLIST *moveList, Move *move) {

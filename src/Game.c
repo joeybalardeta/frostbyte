@@ -75,9 +75,39 @@ void DeleteGame(Game *game) {
 	}
 }
 
+
+
+Game *CloneGame(Game *game) {
+	Game *clonedGame = (Game *) malloc(sizeof(Game));
+
+	
+	clonedGame->player_white = game->player_white;
+	clonedGame->player_black = game->player_black;
+
+	clonedGame->lastMove = CloneMove(game->lastMove);
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (game->board[i][j] == NULL) {
+				clonedGame->board[i][j] = NULL;
+			}
+			else {
+				Piece *piece = game->board[i][j];
+				Piece *clonedPiece = ClonePiece(piece);
+
+				AddPiece(clonedGame, clonedPiece, i, j);
+			}
+		}
+	}
+
+	return clonedGame;
+}
+
+
 void AddPiece(Game *game, Piece *piece, unsigned char rank, unsigned char file) {
 	game->board[rank][file] = piece;
 }
+
 
 
 void RemovePiece(Game *game, unsigned char rank, unsigned char file) {
@@ -90,9 +120,10 @@ void RemovePiece(Game *game, unsigned char rank, unsigned char file) {
 
 
 void MovePiece(Game *game, Move *move) {
-	// all of this stuff is for en passant
 	
+	// all of this stuff is for en passant
 	Piece *piece = GetPiece(game, move->from_rank, move->from_file);
+
 	piece->moveCount += 1;
 
 	int move_dir;
@@ -103,6 +134,7 @@ void MovePiece(Game *game, Move *move) {
 	else {
 		move_dir = -1;
 	}
+
 
 	if (!HasPiece(game, move->to_rank, move->to_file) && piece->type == PAWN && move->from_rank != move->to_rank) {
 		RemovePiece(game, move->to_rank, move->to_file - move_dir);

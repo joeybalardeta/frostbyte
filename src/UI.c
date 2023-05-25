@@ -4,6 +4,7 @@
 #include "UI.h"
 #include "Player.h"
 #include "Rules.h"
+#include "AI.h"
 
 void PrintMenu() {
 	printf("Choose an option:\n\n");
@@ -33,12 +34,18 @@ void ProcessInput(int input) {
 		case 2:
 		{
 			printf("Starting Player vs. Computer\n\n");
+			Game *game = CreateGame(CreatePlayer(USER), CreatePlayer(COMPUTER));
+			GameLoop(game);
+			DeleteGame(game);
 			break;
 		}
 
 		case 3:
 		{
 			printf("Starting Computer vs. Computer\n\n");
+			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
+			GameLoop(game);
+			DeleteGame(game);
 			break;
 		}
 
@@ -198,24 +205,48 @@ Move *GetUserMove(Game *game, unsigned char color) {
 
 void GameLoop(Game *game) {
 	while(1) {
+		PrintBoard(game);
+		
 		if (game->player_white->type == USER) {
-			PrintBoard(game);
 			Move *move = GetUserMove(game, WHITE);
 			MovePiece(game, move);
 			DeleteMove(move);
 		}
 		else {
-			;
+			Move *move = GetAIMove(game, WHITE);
+			MovePiece(game, move);
+			DeleteMove(move);
 		}
-		
+	
+		int gameState = IsCheckOrStaleMated(game, BLACK);
+
+		if (gameState == -1) {
+			printf("White wins by checkmate!\n\n");
+		}
+		else if (gameState == -2) {
+			printf("Tie by stalemate!\n\n");
+		}
+
+		PrintBoardR(game);
+
 		if (game->player_black->type == USER) {
-			PrintBoardR(game);
 			Move *move = GetUserMove(game, BLACK);
 			MovePiece(game, move);
 			DeleteMove(move);
 		}
 		else {
-			;
+			Move *move = GetAIMove(game, BLACK);
+			MovePiece(game, move);
+			DeleteMove(move);
+		}
+
+		gameState = IsCheckOrStaleMated(game, BLACK);
+
+		if (gameState == -1) {
+			printf("Black wins by checkmate!\n\n");
+		}
+		else if (gameState == -2) {
+			printf("Tie by stalemate!\n\n");
 		}
 	}
 }

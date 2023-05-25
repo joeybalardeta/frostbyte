@@ -26,9 +26,15 @@ void RemoveMoveListEntry(MLIST *moveList, unsigned int entry);
 
 void DeleteMoveList(MLIST *moveList);
 
+MLIST *AddMoveLists(MLIST *destination, MLIST *source);
+
 MLENTRY *CreateMoveListEntry(Move *move);
 
+MLENTRY *CloneMoveListEntry(MLENTRY *moveListEntry);
+
 void AddMoveListEntry(MLIST *moveList, MLENTRY *moveListEntry);
+
+MLENTRY *GetMoveListEntry(MLIST *moveList, unsigned int index);
 
 void AddMove(MLIST *moveList, Move *move);
 

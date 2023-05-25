@@ -17,6 +17,8 @@ Game *CreateGame(Player *player_white, Player *player_black);
 
 void DeleteGame(Game *game);
 
+Game *CloneGame(Game *game);
+
 void AddPiece(Game *game, Piece *piece, unsigned char rank, unsigned char file);
 
 void RemovePiece(Game *game, unsigned char rank, unsigned char file);

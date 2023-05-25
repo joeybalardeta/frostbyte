@@ -10,6 +10,20 @@ Piece *CreatePiece(unsigned char color, unsigned char type) {
 	return piece;
 }
 
+Piece *ClonePiece(Piece *piece) {
+	if (piece == NULL) {
+		return NULL;
+	}
+
+	Piece *clonedPiece = (Piece *) malloc(sizeof(Piece));
+
+	clonedPiece->color = piece->color;
+	clonedPiece->type = piece->type;
+	clonedPiece->moveCount = piece->moveCount;
+
+	return clonedPiece;
+}
+
 void DeletePiece(Piece *piece) {
 	if (piece) {
 		free(piece);

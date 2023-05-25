@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "Rules.h"
 #include "Piece.h"
@@ -38,9 +39,6 @@ int ValidateUserMove(Game *game, Move *move, unsigned char color) {
 	return 0;
 }
 
-int ValidateAIMove(Game *game, Move *move, unsigned char color) {
-	return 0;
-}
 
 int IsInCheck(Game *game, unsigned char color) {
 	unsigned char kingRank = 0;
@@ -194,8 +192,39 @@ int LocScanCheck(Game *game, unsigned char color, unsigned char rank, unsigned c
 	return 1;
 }
 
-int IsCheckmated(Game *game, unsigned char color) {
-	return 0;
+
+// function return codes
+// 0 - no checkmate or stalemate
+// -1 - checkmate
+// -2 - stalemate
+int IsCheckOrStaleMated(Game *game, unsigned char color) {
+	MLIST *allLegalMoves = GenerateAllLegalMoves(game, color);
+
+	if (allLegalMoves->length != 0) {
+		return 0;
+	}
+	
+	if (IsInCheck(game, color)) {
+		return -1;
+	}
+	else {
+		return -2;
+	}
+}
+
+MLIST *GenerateAllLegalMoves(Game *game, unsigned char color) {
+	MLIST *allLegalMoves = CreateMoveList();
+	for (int i = 0; i < 8; i ++) {
+		for (int j = 0; j < 8; j++) {
+			MLIST *squareLegalMoves = GenerateLegalMoves(game, i, j, color);
+			allLegalMoves = AddMoveLists(allLegalMoves, squareLegalMoves);
+			if (squareLegalMoves != NULL) {
+				DeleteMoveList(squareLegalMoves);
+			}
+		}
+	}
+
+	return allLegalMoves;
 }
 
 MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color) {
@@ -258,23 +287,183 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 		}
 		case BISHOP:
 		{
+			for (int quadrant = 0; quadrant < 4; quadrant++) {
+				int x_mult = 1;
+				int y_mult = 1;
 
+				if (quadrant == 1) {
+					x_mult = -1;
+					y_mult = 1;
+				}
+				else if (quadrant == 2) {
+					x_mult = -1;
+					y_mult = -1;
+				}
+				else if (quadrant == 3) {
+					x_mult = 1;
+					y_mult = -1;
+				}	
+
+				for (int i = 1; i < 8; i++) {
+					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color != color) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+						break;
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color == color) {
+						break;
+					}
+				}
+			}
 		}
 		case KNIGHT:
 		{
-
+			char possibleMoves[8][2] = { {2, 1},
+										 {2, -1},
+									     {-2, 1},									
+										 {-2, -1},
+										 {1, 2},
+										 {1, -2},
+										 {-1, 2},
+										 {-1, -2} };
+			
+			for (int i = 0; i < 8; i++) {
+				if (LocIsOnBoard(rank + possibleMoves[i][0], file + possibleMoves[i][1]) && ((!HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1])) || (HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1]) && GetPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1])->color != color))) {
+					AddMove(legalMoves, CreateMove(rank, file, rank + possibleMoves[i][0], file + possibleMoves[i][1]));
+				
+				}
+			}
 		}
 		case ROOK:
 		{
+			for (int quadrant = 0; quadrant < 4; quadrant++) {
+				int x_mult = 1;
+				int y_mult = 0;
 
+				if (quadrant == 1) {
+					x_mult = 0;
+					y_mult = 1;
+				}
+				else if (quadrant == 2) {
+					x_mult = -1;
+					y_mult = 0;
+				}
+				else if (quadrant == 3) {
+					x_mult = 0;
+					y_mult = -1;
+				}	
+
+				for (int i = 1; i < 8; i++) {
+					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color != color) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+						break;
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color == color) {
+						break;
+					}
+				}
+			}
 		}
 		case QUEEN:
 		{
 
+			for (int quadrant = 0; quadrant < 4; quadrant++) {
+				int x_mult = 1;
+				int y_mult = 1;
+
+				if (quadrant == 1) {
+					x_mult = -1;
+					y_mult = 1;
+				}
+				else if (quadrant == 2) {
+					x_mult = -1;
+					y_mult = -1;
+				}
+				else if (quadrant == 3) {
+					x_mult = 1;
+					y_mult = -1;
+				}	
+
+				for (int i = 1; i < 8; i++) {
+					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color != color) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+						break;
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color == color) {
+						break;
+					}
+				}
+			}
+
+			for (int quadrant = 0; quadrant < 4; quadrant++) {
+				int x_mult = 1;
+				int y_mult = 0;
+
+				if (quadrant == 1) {
+					x_mult = 0;
+					y_mult = 1;
+				}
+				else if (quadrant == 2) {
+					x_mult = -1;
+					y_mult = 0;
+				}
+				else if (quadrant == 3) {
+					x_mult = 0;
+					y_mult = -1;
+				}	
+
+				for (int i = 1; i < 8; i++) {
+					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color != color) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
+						break;
+					}
+					else if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && HasPiece(game, rank + (i * x_mult), file + (i * y_mult)) && GetPiece(game, rank + (i * x_mult), file + (i * y_mult))->color == color) {
+						break;
+					}
+				}
+			}
 		}
 		case KING:
 		{
+			for (int i = -1; i < 2; i++) {
+				for (int j = 0; j < 2; j++) {
+					if (LocIsOnBoard(rank + i, file + j) && ((!HasPiece(game, rank + i, file + j)) || (HasPiece(game, rank + i, file + j) && GetPiece(game, rank + i, file + j)->color != color))) {
+						AddMove(legalMoves, CreateMove(rank, file, rank + i, file + j));
+					}
+				}
+			}
+		}
+	}
 
+	int legalMovesLength = legalMoves->length;
+
+	MLENTRY *currentTestedMoveEntry = legalMoves->last;
+
+	for (int i = legalMovesLength - 1; i >= 0; i--) {
+		Game *clonedGame = CloneGame(game);
+
+		Move *move = currentTestedMoveEntry->move;
+
+		// printf("%d %d %d %d\n", move->from_rank, move->from_file, move->to_rank, move->to_file);
+
+		MovePiece(clonedGame, move);
+
+
+		currentTestedMoveEntry = currentTestedMoveEntry->prev;
+
+		if (IsInCheck(clonedGame, color)) {
+			RemoveMoveListEntry(legalMoves, i);
 		}
 	}
 

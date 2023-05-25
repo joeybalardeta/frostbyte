@@ -13,6 +13,10 @@ Move *CreateMove(unsigned char from_rank, unsigned char from_file, unsigned char
 }
 
 Move *CloneMove(Move *move) {
+	if (move == NULL) {
+		return NULL;
+	}
+
 	Move *clonedMove = CreateMove(move->from_rank, move->from_file, move->to_rank, move->to_file);
 	return clonedMove;
 }
