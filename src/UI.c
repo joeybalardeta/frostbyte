@@ -206,7 +206,25 @@ Move *GetUserMove(Game *game, unsigned char color) {
 void GameLoop(Game *game) {
 	while(1) {
 		PrintBoard(game);
-		
+
+		// checkmate scanning		
+		int gameState = IsCheckOrStaleMated(game, WHITE);
+
+		if (gameState == -1) {
+			printf("Black wins by checkmate!\n\n");
+			break;
+		}
+		else if (gameState == -2) {
+			printf("Draw by stalemate!\n\n");
+			break;
+		}
+		else if (gameState == -3) {
+			printf("Draw by insufficient material!\n\n");
+			break;
+		}
+
+
+		// get white's move
 		if (game->player_white->type == USER) {
 			Move *move = GetUserMove(game, WHITE);
 			MovePiece(game, move);
@@ -217,20 +235,30 @@ void GameLoop(Game *game) {
 			MovePiece(game, move);
 			DeleteMove(move);
 		}
-	
-		int gameState = IsCheckOrStaleMated(game, BLACK);
+
+		CheckPromotions(game, WHITE);
+
+		PrintBoardR(game);
+
+
+		// checkmate scanning
+		gameState = IsCheckOrStaleMated(game, BLACK);
 
 		if (gameState == -1) {
 			printf("White wins by checkmate!\n\n");
 			break;
 		}
 		else if (gameState == -2) {
-			printf("Tie by stalemate!\n\n");
+			printf("Draw by stalemate!\n\n");
+			break;
+		}
+		else if (gameState == -3) {
+			printf("Draw by insufficient material!\n\n");
 			break;
 		}
 
-		PrintBoardR(game);
 
+		// get black's move
 		if (game->player_black->type == USER) {
 			Move *move = GetUserMove(game, BLACK);
 			MovePiece(game, move);
@@ -242,15 +270,8 @@ void GameLoop(Game *game) {
 			DeleteMove(move);
 		}
 
-		gameState = IsCheckOrStaleMated(game, BLACK);
 
-		if (gameState == -1) {
-			printf("Black wins by checkmate!\n\n");
-			break;
-		}
-		else if (gameState == -2) {
-			printf("Tie by stalemate!\n\n");
-			break;
-		}
+		CheckPromotions(game, BLACK);
+
 	}
 }

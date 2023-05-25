@@ -17,4 +17,8 @@ MLIST *GenerateAllLegalMoves(Game *game, unsigned char color);
 
 MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color);
 
+void CheckPromotions(Game *game, unsigned int color);
+
+unsigned char GetPromotionChoice();
+
 #endif

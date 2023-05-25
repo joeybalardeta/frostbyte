@@ -84,8 +84,8 @@ void DeleteGame(Game *game) {
 Game *CloneGame(Game *game) {
 	Game *clonedGame = (Game *) malloc(sizeof(Game));
 
-	Player *playerW = CreatePlayer(game->player_white->type);
-	Player *playerB = CreatePlayer(game->player_black->type);
+	Player *playerW = CreatePlayer(COMPUTER);
+	Player *playerB = CreatePlayer(COMPUTER);
 	
 	clonedGame->player_white = playerW;
 	clonedGame->player_black = playerB;

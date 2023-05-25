@@ -51,6 +51,7 @@ int IsInCheck(Game *game, unsigned char color) {
 			if (HasPiece(game, i, j) && GetPiece(game, i, j)->color == color && GetPiece(game, i , j)->type == KING) {
 					kingRank = i;
 					kingFile = j;
+					break;
 			}
 		}
 	}
@@ -72,6 +73,8 @@ int IsInCheck(Game *game, unsigned char color) {
 	if (LocScanCheck(game, color, kingRank + 1, kingFile - opponent_move_dir, PAWN)) {
 		return 1;
 	}
+
+	// printf("No pawn checks.\n");
 
 
 	// scan for knight checks
@@ -100,6 +103,7 @@ int IsInCheck(Game *game, unsigned char color) {
 		return 1;
 	}
 
+	// printf("No knight checks.\n");
 
 	// scan for rook and queen checks
 	for (int i = 1; i < 8; i++) {
@@ -114,6 +118,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks above.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank, kingFile - i, ROOK)) {
 			return 1;
@@ -126,6 +133,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks below.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank + i, kingFile, ROOK)) {
 			return 1;
@@ -138,6 +148,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks right.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank - i, kingFile, ROOK)) {
 			return 1;
@@ -152,6 +165,10 @@ int IsInCheck(Game *game, unsigned char color) {
 	}
 
 	
+	// printf("No checks left.\n");
+
+	// printf("No straight checks.\n");
+	
 	// scan for bishop and queen checks
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank + i, kingFile + i, BISHOP)) {
@@ -165,6 +182,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks up right.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank + i, kingFile - i, BISHOP)) {
 			return 1;
@@ -177,6 +197,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks down right.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank - i, kingFile + i, BISHOP)) {
 			return 1;
@@ -189,6 +212,9 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
+
+	// printf("No checks up left.\n");
+
 	for (int i = 1; i < 8; i++) {
 		if (LocScanCheck(game, color, kingRank - i, kingFile - i, BISHOP)) {
 			return 1;
@@ -201,7 +227,21 @@ int IsInCheck(Game *game, unsigned char color) {
 			break;
 		}
 	}
-	
+
+	// printf("No checks down left.\n");
+
+	// printf("No diagonal checks.\n");
+
+	// scan for king checks
+	for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			if (LocScanCheck(game, color, kingRank + i, kingFile + j, KING)) {
+				return 1;
+			}
+		}
+	}	
+
+	// printf("No king checks.\n");
 
 	return 0;
 }
@@ -231,17 +271,56 @@ int LocScanCheck(Game *game, unsigned char color, unsigned char rank, unsigned c
 // 0 - no checkmate or stalemate
 // -1 - checkmate
 // -2 - stalemate
+// -3 - draw by insufficient material
 int IsCheckOrStaleMated(Game *game, unsigned char color) {
+	int whitePieceCount = 0;
+	int blackPieceCount = 0;
+
+	int whiteKnightOrBishopPresent = 0;
+	int blackKnightOrBishopPresent = 0;
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (HasPiece(game, i, j)) {
+				if (GetPiece(game, i, j)->color == WHITE) {
+					whitePieceCount++;
+					if (GetPiece(game, i, j)->type == KNIGHT || GetPiece(game, i, j)->type == BISHOP) {
+						whiteKnightOrBishopPresent = 1;
+					} 
+				}
+				else {
+					blackPieceCount++;
+					if (GetPiece(game, i, j)->type == KNIGHT || GetPiece(game, i, j)->type == BISHOP) {
+						blackKnightOrBishopPresent = 1;
+					} 
+				}
+			}
+		}
+	}	
+
+	if (whitePieceCount == 1 && blackPieceCount == 1) {
+		return -3;
+	}
+
+	if (whitePieceCount == 2 && blackPieceCount == 1 && whiteKnightOrBishopPresent) {
+		return -3;
+	}
+
+	if (blackPieceCount == 2 && whitePieceCount == 1 && blackKnightOrBishopPresent) {
+		return -3;
+	}
+
+
 	MLIST *allLegalMoves = GenerateAllLegalMoves(game, color);
 
 	MLENTRY *moveListEntry = allLegalMoves->first;
 
 	for (int i = 0; i < allLegalMoves->length; i++) {
-		PrintMove(moveListEntry->move);
+		// PrintMove(moveListEntry->move);
 		moveListEntry = moveListEntry->next;
 	}
 
-	printf("Number of Legal Moves: %d\n", allLegalMoves->length);
+	// printf("Number of Legal Moves: %d\n", allLegalMoves->length);
 
 	if (allLegalMoves->length != 0) {
 		DeleteMoveList(allLegalMoves);
@@ -493,10 +572,24 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 		case KING:
 		{
 			for (int i = -1; i < 2; i++) {
-				for (int j = 0; j < 2; j++) {
+				for (int j = -1; j < 2; j++) {
 					if (LocIsOnBoard(rank + i, file + j) && ((!HasPiece(game, rank + i, file + j)) || (HasPiece(game, rank + i, file + j) && GetPiece(game, rank + i, file + j)->color != color))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + i, file + j));
 					}
+				}
+			}
+
+			// castling
+			{
+				Piece *king = GetPiece(game, rank, file);
+
+				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && GetPiece(game, rank + 3, file)->type == ROOK && GetPiece(game, rank + 3, file)->color == color && GetPiece(game, rank + 3, file)->moveCount == 0) {
+					// AddMove(legalMoves, CreateMove(rank, file, rank + 3, file));
+				}
+
+				
+				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && GetPiece(game, rank - 4, file)->type == ROOK && GetPiece(game, rank - 4, file)->color == color && GetPiece(game, rank - 4, file)->moveCount == 0) {
+					// AddMove(legalMoves, CreateMove(rank, file, rank - 4, file));
 				}
 			}
 		}
@@ -513,6 +606,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 		Move *move = currentTestedMoveEntry->move;
 
+		// PrintMove(move);
+
 		MovePiece(clonedGame, move);
 
 
@@ -526,4 +621,94 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 	}
 
 	return legalMoves;
+}
+
+
+
+
+void CheckPromotions(Game *game, unsigned int color) {
+	if (color == WHITE) {
+		for (int i = 0; i < 8; i++) {
+			if (LocIsOnBoard(i, 7) && HasPiece(game, i, 7) && GetPiece(game, i, 7)->color == color && GetPiece(game, i, 7)->type == PAWN) {
+				if (game->player_white->type == USER) {
+					switch (GetPromotionChoice()) {
+						case KNIGHT:
+							PromotePiece(game->board[i][7], KNIGHT);
+							break;
+
+						case BISHOP:
+							PromotePiece(game->board[i][7], BISHOP);
+							break;
+
+						case ROOK:
+							PromotePiece(game->board[i][7], ROOK);
+							break;
+
+						case QUEEN:
+							PromotePiece(game->board[i][7], QUEEN);
+							break;
+
+					}
+				}
+				else {
+					PromotePiece(game->board[i][7], QUEEN);
+				}
+			}
+		}
+	}
+	else {
+		for (int i = 0; i < 8; i++) {
+			if (LocIsOnBoard(i, 0) && HasPiece(game, i, 0) && GetPiece(game, i, 0)->color == color && GetPiece(game, i, 0)->type == PAWN) {
+				if (game->player_white->type == USER) {
+					switch (GetPromotionChoice()) {
+						case KNIGHT:
+							PromotePiece(game->board[i][0], KNIGHT);
+							break;
+
+						case BISHOP:
+							PromotePiece(game->board[i][0], BISHOP);
+							break;
+
+						case ROOK:
+							PromotePiece(game->board[i][0], ROOK);
+							break;
+
+						case QUEEN:
+							PromotePiece(game->board[i][0], QUEEN);
+							break;
+
+					}
+				}
+				else {
+					PromotePiece(game->board[i][0], QUEEN);
+				}
+			}
+		}
+	}
+}
+
+unsigned char GetPromotionChoice() {
+	unsigned char choice = 0;
+	while (1) {
+		printf("\n\n");
+
+		printf("A pawn is avilable for promotion!\n");
+		printf("Choices:\n");
+
+		printf("1 - Bishop\n");
+		printf("2 - Knight\n");
+		printf("3 - Rook\n");
+		printf("4 - Queen\n");
+
+
+		scanf("%c", &choice);
+
+		printf("\n\n");
+
+		if (choice > 0 && choice < 5) {
+			break;
+		}
+	}
+
+	return choice;
 }
