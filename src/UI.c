@@ -222,9 +222,11 @@ void GameLoop(Game *game) {
 
 		if (gameState == -1) {
 			printf("White wins by checkmate!\n\n");
+			break;
 		}
 		else if (gameState == -2) {
 			printf("Tie by stalemate!\n\n");
+			break;
 		}
 
 		PrintBoardR(game);
@@ -244,9 +246,11 @@ void GameLoop(Game *game) {
 
 		if (gameState == -1) {
 			printf("Black wins by checkmate!\n\n");
+			break;
 		}
 		else if (gameState == -2) {
 			printf("Tie by stalemate!\n\n");
+			break;
 		}
 	}
 }

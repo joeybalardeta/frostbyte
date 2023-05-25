@@ -70,6 +70,10 @@ void DeleteGame(Game *game) {
 	DeletePlayer(game->player_black);
 	game->player_black = NULL;
 
+	if (game->lastMove) {
+		DeleteMove(game->lastMove);
+	}
+
 	if (game) {
 		free(game);
 	}
@@ -80,9 +84,11 @@ void DeleteGame(Game *game) {
 Game *CloneGame(Game *game) {
 	Game *clonedGame = (Game *) malloc(sizeof(Game));
 
+	Player *playerW = CreatePlayer(game->player_white->type);
+	Player *playerB = CreatePlayer(game->player_black->type);
 	
-	clonedGame->player_white = game->player_white;
-	clonedGame->player_black = game->player_black;
+	clonedGame->player_white = playerW;
+	clonedGame->player_black = playerB;
 
 	clonedGame->lastMove = CloneMove(game->lastMove);
 

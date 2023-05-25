@@ -21,4 +21,6 @@ int MoveEquals(Move *move1, Move *move2);
 
 void DeleteMove(Move *move);
 
+void PrintMove(Move *move);
+
 #endif

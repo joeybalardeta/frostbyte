@@ -32,6 +32,8 @@ int ValidateUserMove(Game *game, Move *move, unsigned char color) {
 		moveLegalEntry = moveLegalEntry->next;
 	}
 
+	DeleteMoveList(legalMoves);
+
 	if (legalMoveFound) {
 		return 1;
 	}
@@ -101,32 +103,48 @@ int IsInCheck(Game *game, unsigned char color) {
 
 	// scan for rook and queen checks
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank, kingFile + i, ROOK);
-		LocScanCheck(game, color, kingRank, kingFile + i, QUEEN);
+		if (LocScanCheck(game, color, kingRank, kingFile + i, ROOK)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank, kingFile + i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank, kingFile + i) && HasPiece(game, kingRank, kingFile + i)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank, kingFile - i, ROOK);
-		LocScanCheck(game, color, kingRank, kingFile - i, QUEEN);
+		if (LocScanCheck(game, color, kingRank, kingFile - i, ROOK)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank, kingFile - i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank, kingFile - i) && HasPiece(game, kingRank, kingFile - i)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank + i, kingFile, ROOK);
-		LocScanCheck(game, color, kingRank + i, kingFile, QUEEN);
+		if (LocScanCheck(game, color, kingRank + i, kingFile, ROOK)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank + i, kingFile, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank + i, kingFile) && HasPiece(game, kingRank + i, kingFile)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank - i, kingFile, ROOK);
-		LocScanCheck(game, color, kingRank - i, kingFile, QUEEN);
+		if (LocScanCheck(game, color, kingRank - i, kingFile, ROOK)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank - i, kingFile, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank - i, kingFile) && HasPiece(game, kingRank - i, kingFile)) {
 			break;
@@ -136,32 +154,48 @@ int IsInCheck(Game *game, unsigned char color) {
 	
 	// scan for bishop and queen checks
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank + i, kingFile + i, BISHOP);
-		LocScanCheck(game, color, kingRank + i, kingFile + i, QUEEN);
+		if (LocScanCheck(game, color, kingRank + i, kingFile + i, BISHOP)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank + i, kingFile + i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank + i, kingFile + i) && HasPiece(game, kingRank + i, kingFile + i)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank + i, kingFile - i, BISHOP);
-		LocScanCheck(game, color, kingRank + i, kingFile - i, QUEEN);
+		if (LocScanCheck(game, color, kingRank + i, kingFile - i, BISHOP)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank + i, kingFile - i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank + i, kingFile - i) && HasPiece(game, kingRank + i, kingFile - i)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank - i, kingFile + i, BISHOP);
-		LocScanCheck(game, color, kingRank - i, kingFile + i, QUEEN);
+		if (LocScanCheck(game, color, kingRank - i, kingFile + i, BISHOP)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank - i, kingFile + i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank - i, kingFile + i) && HasPiece(game, kingRank - i, kingFile + i)) {
 			break;
 		}
 	}
 	for (int i = 1; i < 8; i++) {
-		LocScanCheck(game, color, kingRank - i, kingFile - i, BISHOP);
-		LocScanCheck(game, color, kingRank - i, kingFile - i, QUEEN);
+		if (LocScanCheck(game, color, kingRank - i, kingFile - i, BISHOP)) {
+			return 1;
+		}
+		if (LocScanCheck(game, color, kingRank - i, kingFile - i, QUEEN)) {
+			return 1;
+		}
 
 		if (LocIsOnBoard(kingRank - i, kingFile - i) && HasPiece(game, kingRank - i, kingFile - i)) {
 			break;
@@ -200,10 +234,22 @@ int LocScanCheck(Game *game, unsigned char color, unsigned char rank, unsigned c
 int IsCheckOrStaleMated(Game *game, unsigned char color) {
 	MLIST *allLegalMoves = GenerateAllLegalMoves(game, color);
 
+	MLENTRY *moveListEntry = allLegalMoves->first;
+
+	for (int i = 0; i < allLegalMoves->length; i++) {
+		PrintMove(moveListEntry->move);
+		moveListEntry = moveListEntry->next;
+	}
+
+	printf("Number of Legal Moves: %d\n", allLegalMoves->length);
+
 	if (allLegalMoves->length != 0) {
+		DeleteMoveList(allLegalMoves);
 		return 0;
 	}
-	
+		
+	DeleteMoveList(allLegalMoves);
+
 	if (IsInCheck(game, color)) {
 		return -1;
 	}
@@ -284,6 +330,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 					AddMove(legalMoves, CreateMove(rank, file, rank + 1, file + move_dir));
 				}
 			}
+
+			break;
 		}
 		case BISHOP:
 		{
@@ -317,6 +365,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 					}
 				}
 			}
+
+			break;
 		}
 		case KNIGHT:
 		{
@@ -335,6 +385,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				
 				}
 			}
+
+			break;
 		}
 		case ROOK:
 		{
@@ -368,6 +420,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 					}
 				}
 			}
+
+			break;
 		}
 		case QUEEN:
 		{
@@ -433,6 +487,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 					}
 				}
 			}
+
+			break;
 		}
 		case KING:
 		{
@@ -444,6 +500,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}
 			}
 		}
+
+		break;
 	}
 
 	int legalMovesLength = legalMoves->length;
@@ -455,8 +513,6 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 		Move *move = currentTestedMoveEntry->move;
 
-		// printf("%d %d %d %d\n", move->from_rank, move->from_file, move->to_rank, move->to_file);
-
 		MovePiece(clonedGame, move);
 
 
@@ -465,6 +521,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 		if (IsInCheck(clonedGame, color)) {
 			RemoveMoveListEntry(legalMoves, i);
 		}
+
+		DeleteGame(clonedGame);
 	}
 
 	return legalMoves;

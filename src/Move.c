@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "Move.h"
 
@@ -41,4 +42,8 @@ int MoveEquals(Move *move1, Move *move2) {
 void DeleteMove(Move *move) {
 	assert(move);
 	free(move);
+}
+
+void PrintMove(Move *move) {
+	printf("Move: %c%c, %c%c\n", move->from_rank + 'a', move->from_file + '1', move->to_rank + 'a', move->to_file + '1');
 }
