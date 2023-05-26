@@ -151,17 +151,17 @@ void MovePiece(Game *game, Move *move) {
 	RemovePiece(game, move->to_rank, move->to_file);
 	game->board[move->to_rank][move->to_file] = game->board[move->from_rank][move->from_file];
 	game->board[move->from_rank][move->from_file] = NULL;
-
-	if (move->from_rank - move->to_rank == 2) {
-		game->board[move->from_rank + 3][move->from_file] = game->board[move->from_rank + 1][move->from_file];
-		game->board[move->from_rank + 3][move->from_file] = NULL;
-		
+	
+	if (piece->type == KING) {
+		if (move->to_rank - move->from_rank == 2) {
+			game->board[move->from_rank + 1][move->from_file] = game->board[move->from_rank + 3][move->from_file];
+			game->board[move->from_rank + 3][move->from_file] = NULL;		
+		}
+		else if (move->to_rank - move->from_rank == -2) {
+			game->board[move->from_rank - 1][move->from_file] = game->board[move->from_rank - 4][move->from_file];
+			game->board[move->from_rank - 4][move->from_file] = NULL;
+		}
 	}
-	else if (move->from_rank - move->to_rank == -2) {
-		game->board[move->from_rank - 4][move->from_file] = game->board[move->from_rank - 1][move->from_file];
-		game->board[move->from_rank - 4][move->from_file] = NULL;
-	}
-
 
 	if (game->lastMove) {
 		DeleteMove(game->lastMove);

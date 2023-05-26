@@ -585,11 +585,11 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 			{
 				Piece *king = GetPiece(game, rank, file);
 
-				/*
+				
 				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && GetPiece(game, rank + 3, file)->type == ROOK && GetPiece(game, rank + 3, file)->color == color && GetPiece(game, rank + 3, file)->moveCount == 0) {
 					if (!HasPiece(game, rank + 1, file) && !HasPiece(game, rank + 2, file)) {
 						
-						printf("Running right side castle check.\n");
+						// printf("Running right side castle check.\n");
 
 						int castleNotValid = 0;
 						for (int i = 1; i < 3; i++) {
@@ -604,6 +604,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 							}
 
 							DeleteMove(move);
+							DeleteGame(clonedGame);
 						}
 
 						if (!castleNotValid) {
@@ -618,7 +619,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && GetPiece(game, rank - 4, file)->type == ROOK && GetPiece(game, rank - 4, file)->color == color && GetPiece(game, rank - 4, file)->moveCount == 0) {
 					if (!HasPiece(game, rank - 1, file) && !HasPiece(game, rank - 2, file) && !HasPiece(game, rank - 3, file)) {
 						
-						printf("Running left side castle check.\n");
+						// printf("Running left side castle check.\n");
 
 						int castleNotValid = 0;
 						for (int i = 1; i < 4; i++) {
@@ -633,7 +634,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 							}
 
 							DeleteMove(move);
-							DeleteGame(game);
+							DeleteGame(clonedGame);
 						}
 
 						if (!castleNotValid) {
@@ -641,7 +642,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 						}
 					}
 				}
-				*/
+				
 			}
 		}
 
@@ -657,7 +658,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 		Move *move = currentTestedMoveEntry->move;
 
-		PrintMove(move);
+		// PrintMove(move);
 
 		MovePiece(clonedGame, move);
 
