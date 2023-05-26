@@ -9,15 +9,15 @@ A custom chess engine, written in C. This was inspired by my school project to b
 
 ## Current Features
 - Player vs Player
+- Player vs Computer
+- Computer vs Computer
 
 ## Future Planned Features
- - Move validation (any move is legal as of now)
- - Player vs Computer
- - Computer vs Computer
+ - Smarter AI (random moves are funny, but they don't win games)
  - Computer vs Computer | Machine Learning Mode
 
 
 ## Project Info
- - Developed in WSL Ubuntu
+ - Developed in WSL Ubuntu + MacOS Ventura
  - Compiled with gcc
  - Compatibile with any OS (gcc and make required)
