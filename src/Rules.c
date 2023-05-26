@@ -337,6 +337,7 @@ int IsCheckOrStaleMated(Game *game, unsigned char color) {
 	}
 }
 
+
 MLIST *GenerateAllLegalMoves(Game *game, unsigned char color) {
 	MLIST *allLegalMoves = CreateMoveList();
 	for (int i = 0; i < 8; i ++) {
@@ -351,6 +352,7 @@ MLIST *GenerateAllLegalMoves(Game *game, unsigned char color) {
 
 	return allLegalMoves;
 }
+
 
 MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color) {
 	Piece *piece = game->board[rank][file];
@@ -583,14 +585,63 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 			{
 				Piece *king = GetPiece(game, rank, file);
 
+				/*
 				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && GetPiece(game, rank + 3, file)->type == ROOK && GetPiece(game, rank + 3, file)->color == color && GetPiece(game, rank + 3, file)->moveCount == 0) {
-					// AddMove(legalMoves, CreateMove(rank, file, rank + 3, file));
+					if (!HasPiece(game, rank + 1, file) && !HasPiece(game, rank + 2, file)) {
+						
+						printf("Running right side castle check.\n");
+
+						int castleNotValid = 0;
+						for (int i = 1; i < 3; i++) {
+							Game *clonedGame = CloneGame(game);
+
+							Move *move = CreateMove(rank, file, rank + i, file);
+
+							MovePiece(clonedGame, move);
+
+							if (IsInCheck(clonedGame, color)) {
+								castleNotValid = 1;
+							}
+
+							DeleteMove(move);
+						}
+
+						if (!castleNotValid) {
+							AddMove(legalMoves, CreateMove(rank, file, rank + 2, file));
+						}
+					}
+
+
 				}
 
 				
 				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && GetPiece(game, rank - 4, file)->type == ROOK && GetPiece(game, rank - 4, file)->color == color && GetPiece(game, rank - 4, file)->moveCount == 0) {
-					// AddMove(legalMoves, CreateMove(rank, file, rank - 4, file));
+					if (!HasPiece(game, rank - 1, file) && !HasPiece(game, rank - 2, file) && !HasPiece(game, rank - 3, file)) {
+						
+						printf("Running left side castle check.\n");
+
+						int castleNotValid = 0;
+						for (int i = 1; i < 4; i++) {
+							Game *clonedGame = CloneGame(game);
+
+							Move *move = CreateMove(rank, file, rank - i, file);
+
+							MovePiece(clonedGame, move);
+
+							if (IsInCheck(clonedGame, color)) {
+								castleNotValid = 1;
+							}
+
+							DeleteMove(move);
+							DeleteGame(game);
+						}
+
+						if (!castleNotValid) {
+							AddMove(legalMoves, CreateMove(rank, file, rank - 2, file));
+						}
+					}
 				}
+				*/
 			}
 		}
 
@@ -606,7 +657,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 		Move *move = currentTestedMoveEntry->move;
 
-		// PrintMove(move);
+		PrintMove(move);
 
 		MovePiece(clonedGame, move);
 
