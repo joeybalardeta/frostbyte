@@ -53,6 +53,13 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 	AddPiece(game, CreatePiece(BLACK, KNIGHT), 6, 7);
 	AddPiece(game, CreatePiece(BLACK, ROOK), 7, 7);
 
+
+	game->white_king_rank = 4;
+	game->white_king_file = 0;
+
+	game->black_king_rank = 4;
+	game->black_king_file = 7;
+
 	return game;
 }
 
@@ -160,6 +167,15 @@ void MovePiece(Game *game, Move *move) {
 		else if (move->to_rank - move->from_rank == -2) {
 			game->board[move->from_rank - 1][move->from_file] = game->board[move->from_rank - 4][move->from_file];
 			game->board[move->from_rank - 4][move->from_file] = NULL;
+		}
+
+		if (piece->color == WHITE) {
+			game->white_king_rank = move->to_rank;
+			game->white_king_file = move->to_file;
+		}	
+		else {
+			game->black_king_rank = move->to_rank;
+			game->black_king_file = move->to_file;
 		}
 	}
 

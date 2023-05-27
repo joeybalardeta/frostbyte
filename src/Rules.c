@@ -46,6 +46,17 @@ int IsInCheck(Game *game, unsigned char color) {
 	unsigned char kingRank = 0;
 	unsigned char kingFile = 0;
 
+	/*
+	if (color == WHITE) {
+		kingRank = game->white_king_rank;
+		kingFile = game->white_king_file;
+	}
+	else {
+		kingRank = game->black_king_rank;
+		kingFile = game->black_king_file;
+	}
+	*/
+	
 	for (unsigned char i = 0; i < 8; i++) {
 		for (unsigned char j = 0; j < 8; j++) {
 			if (HasPiece(game, i, j) && GetPiece(game, i, j)->color == color && GetPiece(game, i , j)->type == KING) {
@@ -55,6 +66,7 @@ int IsInCheck(Game *game, unsigned char color) {
 			}
 		}
 	}
+	
 
 	int opponent_move_dir;
 
@@ -434,6 +446,10 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}	
 
 				for (int i = 1; i < 8; i++) {
+					if (!LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult))) {
+						// break;
+					}
+
 					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
 					}
@@ -489,6 +505,10 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}	
 
 				for (int i = 1; i < 8; i++) {
+					if (!LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult))) {
+						// break;
+					}
+
 					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
 					}
@@ -524,7 +544,11 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 					y_mult = -1;
 				}	
 
-				for (int i = 1; i < 8; i++) {
+				for (int i = 1; i < 8; i++) {					
+					if (!LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult))) {
+						// break;
+					}
+
 					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
 					}
@@ -556,6 +580,10 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}	
 
 				for (int i = 1; i < 8; i++) {
+					if (!LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult))) {
+						// break;
+					}
+
 					if (LocIsOnBoard(rank + (i * x_mult), file + (i * y_mult)) && !HasPiece(game, rank + (i * x_mult), file + (i * y_mult))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + (i * x_mult), file + (i * y_mult)));
 					}

@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <sys/time.h>
 #include "UI.h"
 #include "Player.h"
 #include "Rules.h"
 #include "AI.h"
+#include "MoveGenerator.h"
 
 void PrintMenu() {
 	printf("Choose an option:\n\n");
@@ -13,7 +15,7 @@ void PrintMenu() {
 	printf("2 - Player vs. Computer\n");
 	printf("3 - Computer vs. Computer\n");
 	printf("4 - Computer vs. Computer (Machine Learning)\n");
-	printf("5 - View previous game log\n");
+	printf("5 - Move Generation Test\n");
 	printf("6 - Exit\n\n");
 
 	printf("Enter choice here: ");
@@ -57,7 +59,34 @@ void ProcessInput(int input) {
 
 		case 5:
 		{
-			printf("Printing previous game log:\n\n");
+			printf("Move Generation Test:\n\n");
+
+			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
+			
+			int depth = 6;
+
+			struct timeval t1, t2;
+
+			double elapsedTime = 0.0;
+
+			for (int i = 0; i < depth; i++) {
+				gettimeofday(&t1, NULL);
+
+				unsigned int totalPositions = GenerateMoves(game, WHITE, i);
+				
+				gettimeofday(&t2, NULL);
+				elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
+				elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;				
+
+				printf("Depth %d | Result: %d positions | Time: %fms\n", i, totalPositions, elapsedTime);
+
+				
+			}
+			
+			printf("\n\n");
+
+			DeleteGame(game);			
+
 			break;
 		}
 		
