@@ -54,11 +54,11 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 	AddPiece(game, CreatePiece(BLACK, ROOK), 7, 7);
 
 
-	game->white_king_rank = 4;
-	game->white_king_file = 0;
+	game->white_king_location[0] = 4;
+	game->white_king_location[1] = 0;
 
-	game->black_king_rank = 4;
-	game->black_king_file = 7;
+	game->black_king_location[0] = 4;
+	game->black_king_location[1] = 7;
 
 	return game;
 }
@@ -98,6 +98,12 @@ Game *CloneGame(Game *game) {
 	clonedGame->player_black = playerB;
 
 	clonedGame->lastMove = CloneMove(game->lastMove);
+
+	clonedGame->white_king_location[0] = game->white_king_location[0];
+	clonedGame->white_king_location[1] = game->white_king_location[1];
+	
+	clonedGame->black_king_location[0] = game->black_king_location[0];
+	clonedGame->black_king_location[1] = game->black_king_location[1];
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -170,12 +176,12 @@ void MovePiece(Game *game, Move *move) {
 		}
 
 		if (piece->color == WHITE) {
-			game->white_king_rank = move->to_rank;
-			game->white_king_file = move->to_file;
+			game->white_king_location[0] = move->to_rank;
+			game->white_king_location[1] = move->to_file;
 		}	
 		else {
-			game->black_king_rank = move->to_rank;
-			game->black_king_file = move->to_file;
+			game->black_king_location[0] = move->to_rank;
+			game->black_king_location[1] = move->to_file;
 		}
 	}
 

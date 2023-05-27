@@ -46,17 +46,16 @@ int IsInCheck(Game *game, unsigned char color) {
 	unsigned char kingRank = 0;
 	unsigned char kingFile = 0;
 
-	/*
 	if (color == WHITE) {
-		kingRank = game->white_king_rank;
-		kingFile = game->white_king_file;
+		kingRank = game->white_king_location[0];
+		kingFile = game->white_king_location[1];
 	}
 	else {
-		kingRank = game->black_king_rank;
-		kingFile = game->black_king_file;
+		kingRank = game->black_king_location[0];
+		kingFile = game->black_king_location[1];
 	}
-	*/
-	
+
+	/*
 	for (unsigned char i = 0; i < 8; i++) {
 		for (unsigned char j = 0; j < 8; j++) {
 			if (HasPiece(game, i, j) && GetPiece(game, i, j)->color == color && GetPiece(game, i , j)->type == KING) {
@@ -66,7 +65,7 @@ int IsInCheck(Game *game, unsigned char color) {
 			}
 		}
 	}
-	
+	*/	
 
 	int opponent_move_dir;
 

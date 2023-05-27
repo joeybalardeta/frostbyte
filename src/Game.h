@@ -11,11 +11,8 @@ typedef struct {
 	Player *player_black;
 	Move *lastMove;
 
-	unsigned char white_king_rank;
-	unsigned char white_king_file;
-
-	unsigned char black_king_rank;
-	unsigned char black_king_file;
+	unsigned char white_king_location[2];
+	unsigned char black_king_location[2];
 
 } Game;
 
