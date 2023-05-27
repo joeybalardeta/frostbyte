@@ -18,6 +18,10 @@ typedef struct {
 
 Game *CreateGame(Player *player_white, Player *player_black);
 
+void SetDefaultPosition(Game *game);
+
+void ClearBoard(Game *game);
+
 void DeleteGame(Game *game);
 
 Game *CloneGame(Game *game);

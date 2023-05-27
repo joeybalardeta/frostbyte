@@ -19,6 +19,13 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 		}
 	}
 
+	SetDefaultPosition(game);
+
+	return game;
+}
+
+
+void SetDefaultPosition(Game *game) {
 	AddPiece(game, CreatePiece(WHITE, PAWN), 0, 1);
 	AddPiece(game, CreatePiece(WHITE, PAWN), 1, 1);
 	AddPiece(game, CreatePiece(WHITE, PAWN), 2, 1);
@@ -52,15 +59,22 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 	AddPiece(game, CreatePiece(BLACK, BISHOP), 5, 7);
 	AddPiece(game, CreatePiece(BLACK, KNIGHT), 6, 7);
 	AddPiece(game, CreatePiece(BLACK, ROOK), 7, 7);
-
+	
 
 	game->white_king_location[0] = 4;
 	game->white_king_location[1] = 0;
 
 	game->black_king_location[0] = 4;
 	game->black_king_location[1] = 7;
+}
 
-	return game;
+
+void ClearBoard(Game *game) {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			RemovePiece(game, i, j);
+		}
+	}
 }
 
 

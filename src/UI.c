@@ -7,6 +7,9 @@
 #include "Rules.h"
 #include "AI.h"
 #include "MoveGenerator.h"
+#include "FEN.h"
+
+#define EXIT_INPUT 7
 
 void PrintMenu() {
 	printf("Choose an option:\n\n");
@@ -16,13 +19,15 @@ void PrintMenu() {
 	printf("3 - Computer vs. Computer\n");
 	printf("4 - Computer vs. Computer (Machine Learning)\n");
 	printf("5 - Move Generation Test\n");
-	printf("6 - Exit\n\n");
+	printf("6 - Move Generation Test (FEN)\n");
+	printf("7 - Exit\n\n");
 
 	printf("Enter choice here: ");
 }
 
 
 void ProcessInput(int input) {
+	printf("\n\n");
 	switch (input) {
 		case 1:
 		{
@@ -63,7 +68,7 @@ void ProcessInput(int input) {
 
 			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
 			
-			int depth = 6;
+			int depth = 5;
 
 			struct timeval t1, t2;
 
@@ -92,6 +97,47 @@ void ProcessInput(int input) {
 		
 		case 6:
 		{
+			printf("Move Generation Test (FEN):\n");
+			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
+
+			unsigned char color = OpenFEN(game, "./fen/move_generation_fen.txt");
+
+			if (color == 100) {
+				break;
+			}
+
+			PrintBoard(game);
+
+
+			int depth = 6;
+
+			struct timeval t1, t2;
+
+			double elapsedTime = 0.0;
+
+			for (int i = 0; i < depth; i++) {
+				gettimeofday(&t1, NULL);
+
+				unsigned int totalPositions = GenerateMoves(game, color, i);
+				
+				gettimeofday(&t2, NULL);
+				elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
+				elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;				
+
+				printf("Depth %d | Result: %d positions | Time: %fms\n", i, totalPositions, elapsedTime);
+
+				
+			}
+			
+			printf("\n\n");
+
+			DeleteGame(game);			
+
+			break;
+		}
+	
+		case 7:
+		{
 			printf("Exiting program.\n\n");
 			break;
 		}		
@@ -105,7 +151,7 @@ void ProcessInput(int input) {
 
 void UILoop() {
 	int user_input = 0;
-	while (user_input != 6) {
+	while (user_input != EXIT_INPUT) {
 		PrintMenu();
 		while (!(scanf("%d", &user_input) > 0)) {
 			;
