@@ -11,6 +11,7 @@ A custom chess engine, written in C. This was inspired by my school project to b
 - Player vs Player
 - Player vs Computer
 - Computer vs Computer
+- FEN string parsing to set up custom boards (only available for move simulation right now)
 
 ## Future Planned Features
  - Smarter AI (random moves are funny, but they don't win games)
