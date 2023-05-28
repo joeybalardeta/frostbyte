@@ -15,7 +15,7 @@ int IsCheckOrStaleMated(Game *game, unsigned char color);
 
 MLIST *GenerateAllLegalMoves(Game *game, unsigned char color);
 
-MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color);
+MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, unsigned char color, MLIST *masterMoveList);
 
 void CheckPromotions(Game *game, unsigned int color);
 

@@ -65,10 +65,18 @@ void ProcessInput(int input) {
 		case 5:
 		{
 			printf("Move Generation Test:\n\n");
+			
+			int depth;
+
+			printf("Enter depth(>1): ");
+			scanf("%d", &depth);
+
+			if (depth < 1) {
+				break;
+			}
 
 			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
-			
-			int depth = 4;
+		
 
 			struct timeval t1, t2;
 
@@ -98,6 +106,16 @@ void ProcessInput(int input) {
 		case 6:
 		{
 			printf("Move Generation Test (FEN):\n\n");
+
+			int depth;
+
+			printf("Enter depth(>1): ");
+			scanf("%d", &depth);
+
+			if (depth < 1) {
+				break;
+			}
+
 			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
 
 			unsigned char color = OpenFEN(game, "./fen/move_generation_fen.txt");
@@ -109,8 +127,6 @@ void ProcessInput(int input) {
 			PrintBoard(game);
 
 			printf("\n\n");
-
-			int depth = 4;
 
 			struct timeval t1, t2;
 
