@@ -21,6 +21,16 @@ unsigned int GenerateMoves(Game *game, unsigned char color, int depth) {
 	}
 
 	if (depth == 1) {
+		/*
+		MLENTRY *moveEntry = legalMoves->first;
+
+		
+		for (int i = 0; i < legalMoves->length; i++) {
+			PrintMove(moveEntry->move);
+			moveEntry = moveEntry->next;
+		}
+		*/
+
 		DeleteMoveList(legalMoves);
 		return legalMovesLength;
 	}
@@ -47,8 +57,10 @@ unsigned int GenerateMoves(Game *game, unsigned char color, int depth) {
 
 		possibleMoves += newMoves;
 
-		// PrintMove(moveEntry->move);
-		// printf("Possible moves: %d\n", newMoves);
+		if (depth == 2) {
+		//	PrintMove(moveEntry->move);
+		//	printf("Possible moves: %d\n", newMoves);
+		}
 
 		DeleteGame(clonedGame);
 

@@ -178,6 +178,10 @@ void MovePiece(Game *game, Move *move) {
 	RemovePiece(game, move->to_rank, move->to_file);
 	game->board[move->to_rank][move->to_file] = game->board[move->from_rank][move->from_file];
 	game->board[move->from_rank][move->from_file] = NULL;
+
+	if (move->promotionFlag != 0) {
+		PromotePiece(piece, move->promotionFlag);
+	}
 	
 	if (piece->type == KING) {
 		if (move->to_rank - move->from_rank == 2) {

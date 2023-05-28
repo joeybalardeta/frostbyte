@@ -15,7 +15,7 @@
 typedef struct {
 	unsigned char color;
 	unsigned char type;
-	unsigned short moveCount;	
+	unsigned short moveCount;
 } Piece;
 
 Piece *CreatePiece(unsigned char color, unsigned char type);

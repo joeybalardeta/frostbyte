@@ -10,6 +10,15 @@ typedef struct {
 	unsigned char to_rank;
 	unsigned char to_file;
 
+
+	// promotion flags:
+	// 0 - no promotion
+	// 1 - promotion to bishop
+	// 2 - promotion to knight
+	// 3 - promotion to rook
+	// 4 - promotion to queen
+	unsigned char promotionFlag;
+
 } Move;
 
 

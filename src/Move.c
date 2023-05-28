@@ -10,6 +10,8 @@ Move *CreateMove(unsigned char from_rank, unsigned char from_file, unsigned char
 	move->to_rank = to_rank;
 	move->to_file = to_file;
 
+	move->promotionFlag = 0;
+
 	return move;
 }
 
@@ -19,6 +21,9 @@ Move *CloneMove(Move *move) {
 	}
 
 	Move *clonedMove = CreateMove(move->from_rank, move->from_file, move->to_rank, move->to_file);
+
+	clonedMove->promotionFlag = move->promotionFlag;
+
 	return clonedMove;
 }
 
@@ -36,6 +41,10 @@ int MoveEquals(Move *move1, Move *move2) {
 		return 0;
 	}
 
+	if (move1->promotionFlag != move2->promotionFlag) {
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -45,5 +54,12 @@ void DeleteMove(Move *move) {
 }
 
 void PrintMove(Move *move) {
-	printf("Move: %c%c, %c%c\n", move->from_rank + 'a', move->from_file + '1', move->to_rank + 'a', move->to_file + '1');
+	printf("Move: %c%c, %c%c", move->from_rank + 'a', move->from_file + '1', move->to_rank + 'a', move->to_file + '1');
+
+	if (move->promotionFlag != 0) {
+		printf(" | Promotion Flag: %d\n", move->promotionFlag);
+	}
+	else {
+		printf("\n");
+	}
 }

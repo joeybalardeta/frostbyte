@@ -68,13 +68,13 @@ void ProcessInput(int input) {
 
 			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
 			
-			int depth = 5;
+			int depth = 4;
 
 			struct timeval t1, t2;
 
 			double elapsedTime = 0.0;
 
-			for (int i = 0; i < depth; i++) {
+			for (int i = 1; i <= depth; i++) {
 				gettimeofday(&t1, NULL);
 
 				unsigned int totalPositions = GenerateMoves(game, WHITE, i);
@@ -97,7 +97,7 @@ void ProcessInput(int input) {
 		
 		case 6:
 		{
-			printf("Move Generation Test (FEN):\n");
+			printf("Move Generation Test (FEN):\n\n");
 			Game *game = CreateGame(CreatePlayer(COMPUTER), CreatePlayer(COMPUTER));
 
 			unsigned char color = OpenFEN(game, "./fen/move_generation_fen.txt");
@@ -108,14 +108,15 @@ void ProcessInput(int input) {
 
 			PrintBoard(game);
 
+			printf("\n\n");
 
-			int depth = 6;
+			int depth = 4;
 
 			struct timeval t1, t2;
 
 			double elapsedTime = 0.0;
 
-			for (int i = 0; i < depth; i++) {
+			for (int i = 1; i <= depth; i++) {
 				gettimeofday(&t1, NULL);
 
 				unsigned int totalPositions = GenerateMoves(game, color, i);
@@ -272,6 +273,9 @@ Move *GetUserMove(Game *game, unsigned char color) {
 
 	} while (moveErrorCode != 1);
 
+	if (GetPiece(game, from_rank, from_file)->type == PAWN && from_file == 7) {
+		move->promotionFlag = GetPromotionChoice();	
+	}
 
 	printf("\n\n");
 
@@ -311,8 +315,6 @@ void GameLoop(Game *game) {
 			DeleteMove(move);
 		}
 
-		CheckPromotions(game, WHITE);
-
 		PrintBoardR(game);
 
 
@@ -344,9 +346,6 @@ void GameLoop(Game *game) {
 			MovePiece(game, move);
 			DeleteMove(move);
 		}
-
-
-		CheckPromotions(game, BLACK);
 
 	}
 }

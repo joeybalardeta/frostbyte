@@ -60,6 +60,8 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 
 			case 'k':
 				AddPiece(game, CreatePiece(BLACK, KING), rank, file);
+				game->black_king_location[0] = rank;
+				game->black_king_location[1] = file;
 				rank++;
 				break;
 
@@ -91,6 +93,8 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 
 			case 'K':
 				AddPiece(game, CreatePiece(WHITE, KING), rank, file);
+				game->white_king_location[0] = rank;
+				game->white_king_location[1] = file;
 				rank++;
 				break;
 
@@ -144,7 +148,13 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (HasPiece(game, i, j)) {
-				GetPiece(game, i, j)->moveCount = 2;
+				GetPiece(game, i, j)->moveCount = 1;
+				if (j == 1 && GetPiece(game, i, j)->type == PAWN && GetPiece(game, i, j)->color == WHITE) {
+					GetPiece(game, i, j)->moveCount = 0;
+				}
+				if (j == 6 && GetPiece(game, i, j)->type == PAWN && GetPiece(game, i, j)->color == BLACK) {
+					GetPiece(game, i, j)->moveCount = 0;
+				}
 			}
 		}
 	}

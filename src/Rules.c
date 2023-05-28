@@ -391,7 +391,19 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 			// moving forward
 			if (LocIsOnBoard(rank, file + move_dir) && !HasPiece(game, rank, file + move_dir)) {
-				AddMove(legalMoves, CreateMove(rank, file, rank, file + move_dir));
+				unsigned char to_rank = rank;
+				unsigned char to_file = file + move_dir;
+				if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
+					for (int i = 1; i < 5; i++) {
+						Move *promotionMove = CreateMove(rank, file, to_rank, to_file);
+						promotionMove->promotionFlag = i;
+						AddMove(legalMoves, promotionMove);
+					}
+				}
+				else {
+					Move *move = CreateMove(rank, file, to_rank, to_file);
+					AddMove(legalMoves, move);
+				}
 			}
 
 			// first pawn move (can move 2 squares forward as well)
@@ -401,25 +413,73 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 			// basic pawn capture
 			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file + move_dir) && GetPiece(game, rank - 1, file + move_dir)->color != color) {
-				AddMove(legalMoves, CreateMove(rank, file, rank - 1, file + move_dir));
+				unsigned char to_rank = rank - 1;
+				unsigned char to_file = file + move_dir;
+				if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
+					for (int i = 1; i < 5; i++) {
+						Move *promotionMove = CreateMove(rank, file, to_rank, to_file);
+						promotionMove->promotionFlag = i;
+						AddMove(legalMoves, promotionMove);
+					}
+				}
+				else {
+					Move *move = CreateMove(rank, file, to_rank, to_file);
+					AddMove(legalMoves, move);
+				}
 			}
 
 			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file + move_dir) && GetPiece(game, rank + 1, file + move_dir)->color != color) {
-				AddMove(legalMoves, CreateMove(rank, file, rank + 1, file + move_dir));
+				unsigned char to_rank = rank + 1;
+				unsigned char to_file = file + move_dir;
+				if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
+					for (int i = 1; i < 5; i++) {
+						Move *promotionMove = CreateMove(rank, file, to_rank, to_file);
+						promotionMove->promotionFlag = i;
+						AddMove(legalMoves, promotionMove);
+					}
+				}
+				else {
+					Move *move = CreateMove(rank, file, to_rank, to_file);
+					AddMove(legalMoves, move);
+				}
 			}
 
 			// En Passant	
 			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file) && GetPiece(game, rank - 1, file)->color != color && GetPiece(game, rank - 1, file)->type == PAWN) {
 				Move *lastMove = game->lastMove;
 				if (lastMove->from_rank == rank - 1 && lastMove->from_file == file + (move_dir * 2) && lastMove->to_rank == rank - 1 && lastMove->to_file == file) {
-					AddMove(legalMoves, CreateMove(rank, file, rank - 1, file + move_dir));
+					unsigned char to_rank = rank - 1;
+					unsigned char to_file = file + move_dir;
+					if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
+						for (int i = 1; i < 5; i++) {
+							Move *promotionMove = CreateMove(rank, file, to_rank, to_file);
+							promotionMove->promotionFlag = i;
+							AddMove(legalMoves, promotionMove);
+						}
+					}
+					else {
+						Move *move = CreateMove(rank, file, to_rank, to_file);
+						AddMove(legalMoves, move);
+					}
 				}
 			}
 
 			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file) && GetPiece(game, rank + 1, file)->color != color && GetPiece(game, rank + 1, file)->type == PAWN) {
 				Move *lastMove = game->lastMove;
 				if (lastMove->from_rank == rank + 1 && lastMove->from_file == file + (move_dir * 2) && lastMove->to_rank == rank + 1 && lastMove->to_file == file) {
-					AddMove(legalMoves, CreateMove(rank, file, rank + 1, file + move_dir));
+					unsigned char to_rank = rank + 1;
+					unsigned char to_file = file + move_dir;
+					if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
+						for (int i = 1; i < 5; i++) {
+							Move *promotionMove = CreateMove(rank, file, to_rank, to_file);
+							promotionMove->promotionFlag = i;
+							AddMove(legalMoves, promotionMove);
+						}
+					}
+					else {
+						Move *move = CreateMove(rank, file, to_rank, to_file);
+						AddMove(legalMoves, move);
+					}
 				}
 			}
 
@@ -618,25 +678,27 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 						
 						// printf("Running right side castle check.\n");
 
-						int castleNotValid = 0;
-						for (int i = 1; i < 3; i++) {
-							Game *clonedGame = CloneGame(game);
+						if (!IsInCheck(game, color)) {
+							int castleNotValid = 0;
+							for (int i = 1; i < 3; i++) {
+								Game *clonedGame = CloneGame(game);
+								Move *move = CreateMove(rank, file, rank + i, file);
+								MovePiece(clonedGame, move);
 
-							Move *move = CreateMove(rank, file, rank + i, file);
+								if (IsInCheck(clonedGame, color)) {
+									castleNotValid = 1;
+								}
 
-							MovePiece(clonedGame, move);
-
-							if (IsInCheck(clonedGame, color)) {
-								castleNotValid = 1;
+								DeleteMove(move);
+								DeleteGame(clonedGame);
 							}
 
-							DeleteMove(move);
-							DeleteGame(clonedGame);
+							if (!castleNotValid) {
+								AddMove(legalMoves, CreateMove(rank, file, rank + 2, file));
+							}
+
 						}
 
-						if (!castleNotValid) {
-							AddMove(legalMoves, CreateMove(rank, file, rank + 2, file));
-						}
 					}
 
 
@@ -702,69 +764,6 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 	return legalMoves;
 }
 
-
-
-
-void CheckPromotions(Game *game, unsigned int color) {
-	if (color == WHITE) {
-		for (int i = 0; i < 8; i++) {
-			if (LocIsOnBoard(i, 7) && HasPiece(game, i, 7) && GetPiece(game, i, 7)->color == color && GetPiece(game, i, 7)->type == PAWN) {
-				if (game->player_white->type == USER) {
-					switch (GetPromotionChoice()) {
-						case KNIGHT:
-							PromotePiece(game->board[i][7], KNIGHT);
-							break;
-
-						case BISHOP:
-							PromotePiece(game->board[i][7], BISHOP);
-							break;
-
-						case ROOK:
-							PromotePiece(game->board[i][7], ROOK);
-							break;
-
-						case QUEEN:
-							PromotePiece(game->board[i][7], QUEEN);
-							break;
-
-					}
-				}
-				else {
-					PromotePiece(game->board[i][7], QUEEN);
-				}
-			}
-		}
-	}
-	else {
-		for (int i = 0; i < 8; i++) {
-			if (LocIsOnBoard(i, 0) && HasPiece(game, i, 0) && GetPiece(game, i, 0)->color == color && GetPiece(game, i, 0)->type == PAWN) {
-				if (game->player_white->type == USER) {
-					switch (GetPromotionChoice()) {
-						case KNIGHT:
-							PromotePiece(game->board[i][0], KNIGHT);
-							break;
-
-						case BISHOP:
-							PromotePiece(game->board[i][0], BISHOP);
-							break;
-
-						case ROOK:
-							PromotePiece(game->board[i][0], ROOK);
-							break;
-
-						case QUEEN:
-							PromotePiece(game->board[i][0], QUEEN);
-							break;
-
-					}
-				}
-				else {
-					PromotePiece(game->board[i][0], QUEEN);
-				}
-			}
-		}
-	}
-}
 
 unsigned char GetPromotionChoice() {
 	unsigned char choice = 0;
