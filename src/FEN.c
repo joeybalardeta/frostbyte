@@ -145,20 +145,6 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 		index++;
 	}
 
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (HasPiece(game, i, j)) {
-				GetPiece(game, i, j)->moveCount = 1;
-				if (j == 1 && GetPiece(game, i, j)->type == PAWN && GetPiece(game, i, j)->color == WHITE) {
-					GetPiece(game, i, j)->moveCount = 0;
-				}
-				if (j == 6 && GetPiece(game, i, j)->type == PAWN && GetPiece(game, i, j)->color == BLACK) {
-					GetPiece(game, i, j)->moveCount = 0;
-				}
-			}
-		}
-	}
-
 	unsigned char moveColor;
 
 
@@ -175,23 +161,19 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 
 
 			case 'K':
-				GetPiece(game, 4, 0)->moveCount = 0;
-				GetPiece(game, 7, 0)->moveCount = 0;
+				game->castlingRights += 1;
 				break;
 
 			case 'Q':
-				GetPiece(game, 4, 0)->moveCount = 0;
-				GetPiece(game, 0, 0)->moveCount = 0;
+				game->castlingRights += 2;
 				break;
 
 			case 'k':
-				GetPiece(game, 4, 7)->moveCount = 0;
-				GetPiece(game, 7, 7)->moveCount = 0;
+				game->castlingRights += 4;
 				break;
 
 			case 'q':
-				GetPiece(game, 4, 7)->moveCount = 0;
-				GetPiece(game, 0, 7)->moveCount = 0;
+				game->castlingRights += 8;
 				break;
 
 
@@ -231,8 +213,6 @@ unsigned char OpenFEN(Game *game, const char *filepath) {
 	else {
 		moveDir = -1;
 	}
-
-	GetPiece(game, enPassantRank, enPassantFile - moveDir)->moveCount = 1;
 
 	game->lastMove = CreateMove(enPassantRank, enPassantFile + moveDir, enPassantRank, enPassantFile - moveDir);
 	

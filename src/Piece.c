@@ -5,8 +5,6 @@ Piece *CreatePiece(unsigned char color, unsigned char type) {
 	Piece *piece = (Piece *) malloc(sizeof(Piece));
 	piece->color = color;
 	piece->type = type;
-	piece->moveCount = 0;
-
 	return piece;
 }
 
@@ -20,8 +18,7 @@ Piece *ClonePiece(Piece *piece) {
 
 	clonedPiece->color = piece->color;
 	clonedPiece->type = piece->type;
-	clonedPiece->moveCount = piece->moveCount;
-
+	
 	return clonedPiece;
 }
 

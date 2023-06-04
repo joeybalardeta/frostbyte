@@ -19,6 +19,10 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 		}
 	}
 
+	game->castlingRights = 0;
+
+	game->enPassantTargetSquare = -1;
+
 	SetDefaultPosition(game);
 
 	return game;
@@ -26,6 +30,8 @@ Game *CreateGame(Player *player_white, Player *player_black) {
 
 
 void SetDefaultPosition(Game *game) {
+	game->castlingRights = 15;
+
 	AddPiece(game, CreatePiece(WHITE, PAWN), 0, 1);
 	AddPiece(game, CreatePiece(WHITE, PAWN), 1, 1);
 	AddPiece(game, CreatePiece(WHITE, PAWN), 2, 1);
@@ -70,6 +76,8 @@ void SetDefaultPosition(Game *game) {
 
 
 void ClearBoard(Game *game) {
+	game->castlingRights = 0;
+
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			RemovePiece(game, i, j);
@@ -119,6 +127,10 @@ Game *CloneGame(Game *game) {
 	clonedGame->black_king_location[0] = game->black_king_location[0];
 	clonedGame->black_king_location[1] = game->black_king_location[1];
 
+	clonedGame->castlingRights = game->castlingRights;
+
+	clonedGame->enPassantTargetSquare = game->enPassantTargetSquare;
+
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (game->board[i][j] == NULL) {
@@ -157,8 +169,6 @@ void MovePiece(Game *game, Move *move) {
 	// all of this stuff is for en passant
 	Piece *piece = GetPiece(game, move->from_rank, move->from_file);
 
-	piece->moveCount += 1;
-
 	int move_dir;
 
 	if (piece->color == WHITE) {
@@ -168,6 +178,13 @@ void MovePiece(Game *game, Move *move) {
 		move_dir = -1;
 	}
 
+
+	if (IsType(piece, PAWN) && move->to_file - move->from_file == 2) {
+		game->enPassantTargetSquare = move->to_rank + (move->to_file - 1) * 8;
+	}
+	else if (IsType(piece, PAWN) && move->to_file - move->from_file == -2) {
+		game->enPassantTargetSquare = move->to_rank + (move->to_file + 1) * 8;
+	}
 
 	if (!HasPiece(game, move->to_rank, move->to_file) && piece->type == PAWN && move->from_rank != move->to_rank) {
 		RemovePiece(game, move->to_rank, move->to_file - move_dir);
@@ -182,8 +199,48 @@ void MovePiece(Game *game, Move *move) {
 	if (move->promotionFlag != 0) {
 		PromotePiece(piece, move->promotionFlag);
 	}
+
+	if (move->to_rank == 7 && move->to_file == 0) {
+		game->castlingRights = game->castlingRights & 0b1110;
+	}
+	else if (move->to_rank == 0 && move->to_file == 0) {
+		game->castlingRights = game->castlingRights & 0b1101;
+	}
+	else if (move->to_rank == 7 && move->to_file == 7) {
+		game->castlingRights = game->castlingRights & 0b1011;
+	}
+	else if (move->to_rank == 0 && move->to_file == 7) {
+		game->castlingRights = game->castlingRights & 0b0111;
+	}
+
+
+	if (IsType(piece, ROOK)) {
+		if (IsColor(piece, WHITE)) {
+			if (move->from_rank == 7) {
+				game->castlingRights = game->castlingRights & 0b1110;
+			}
+			else if (move->from_rank == 0) {
+				game->castlingRights = game->castlingRights & 0b1101;
+			}
+		}
+		else {
+			if (move->from_rank == 7) {
+				game->castlingRights = game->castlingRights & 0b1011;
+			}
+			else if (move->from_rank == 0) {
+				game->castlingRights = game->castlingRights & 0b0111;
+			}
+		}
+	}
+
 	
-	if (piece->type == KING) {
+	if (IsType(piece, KING)) {
+		if (IsColor(piece, WHITE)) {
+			game->castlingRights = game->castlingRights & 0b1100;
+		}
+		else {
+			game->castlingRights = game->castlingRights & 0b0011;
+		}
 		if (move->to_rank - move->from_rank == 2) {
 			game->board[move->from_rank + 1][move->from_file] = game->board[move->from_rank + 3][move->from_file];
 			game->board[move->from_rank + 3][move->from_file] = NULL;		

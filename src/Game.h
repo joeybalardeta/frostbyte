@@ -14,6 +14,16 @@ typedef struct {
 	unsigned char white_king_location[2];
 	unsigned char black_king_location[2];
 
+	// castling rights encoding
+	// 1 - white king side
+	// 2 - white queen side
+	// 4 - black king side
+	// 8 - black queen side
+	// (15 at start of game)
+	unsigned char castlingRights;
+
+	unsigned char enPassantTargetSquare;
+
 } Game;
 
 Game *CreateGame(Player *player_white, Player *player_black);

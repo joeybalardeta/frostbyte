@@ -423,7 +423,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 			}
 
 			// first pawn move (can move 2 squares forward as well)
-			if (LocIsOnBoard(rank, file + (move_dir * 2)) && piece->moveCount == 0 && !HasPiece(game, rank, file + move_dir) && !HasPiece(game, rank, file + (move_dir * 2))) {
+			if (LocIsOnBoard(rank, file + (move_dir * 2)) && !HasPiece(game, rank, file + move_dir) && !HasPiece(game, rank, file + (move_dir * 2)) && ((IsColor(piece, WHITE) && file == 1) || (IsColor(piece, BLACK) && file == 6))) {
 				AddMove(legalMoves, CreateMove(rank, file, rank, file + (move_dir * 2)));
 			}
 
@@ -687,10 +687,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 
 			// castling
 			{
-				Piece *king = GetPiece(game, rank, file);
-
-				
-				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && IsType(GetPiece(game, rank + 3, file), ROOK) && IsColor(GetPiece(game, rank + 3, file), color) && GetPiece(game, rank + 3, file)->moveCount == 0) {
+				if ((game->castlingRights & 0b0001 && file == 0) || (game->castlingRights & 0b0100 && file == 7)) {
 					if (!HasPiece(game, rank + 1, file) && !HasPiece(game, rank + 2, file)) {
 						
 						// printf("Running right side castle check.\n");
@@ -722,7 +719,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}
 
 				
-				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && IsType(GetPiece(game, rank - 4, file), ROOK) && IsColor(GetPiece(game, rank - 4, file), color) && GetPiece(game, rank - 4, file)->moveCount == 0) {
+				if ((game->castlingRights & 0b0010 && file == 0) || (game->castlingRights & 0b1000 && file == 7)) {
 					if (!HasPiece(game, rank - 1, file) && !HasPiece(game, rank - 2, file) && !HasPiece(game, rank - 3, file)) {
 						
 						// printf("Running left side castle check.\n");
