@@ -267,11 +267,11 @@ int LocScanCheck(Game *game, unsigned char color, unsigned char rank, unsigned c
 		return 0;
 	}
 
-	if (GetPiece(game, rank, file)->color == color) {
+	if (IsColor(GetPiece(game, rank, file), color)) {
 		return 0;
 	}
 
-	if (GetPiece(game, rank, file)->type != pieceType) {
+	if (!IsType(GetPiece(game, rank, file), pieceType)) {
 		return 0;
 	}
 
@@ -294,15 +294,16 @@ int IsCheckOrStaleMated(Game *game, unsigned char color) {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (HasPiece(game, i, j)) {
-				if (GetPiece(game, i, j)->color == WHITE) {
+				Piece *piece = GetPiece(game, i, j);
+				if (IsColor(piece, WHITE)) {
 					whitePieceCount++;
-					if (GetPiece(game, i, j)->type == KNIGHT || GetPiece(game, i, j)->type == BISHOP) {
+					if (IsType(piece, KNIGHT) || IsType(piece, BISHOP)) {
 						whiteKnightOrBishopPresent = 1;
 					} 
 				}
 				else {
 					blackPieceCount++;
-					if (GetPiece(game, i, j)->type == KNIGHT || GetPiece(game, i, j)->type == BISHOP) {
+					if (IsType(piece, KNIGHT) || IsType(piece, BISHOP)) {
 						blackKnightOrBishopPresent = 1;
 					} 
 				}
@@ -427,7 +428,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 			}
 
 			// basic pawn capture
-			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file + move_dir) && GetPiece(game, rank - 1, file + move_dir)->color != color) {
+			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file + move_dir) && !IsColor(GetPiece(game, rank - 1, file + move_dir), color)) {
 				unsigned char to_rank = rank - 1;
 				unsigned char to_file = file + move_dir;
 				if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
@@ -443,7 +444,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}
 			}
 
-			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file + move_dir) && GetPiece(game, rank + 1, file + move_dir)->color != color) {
+			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file + move_dir) && !IsColor(GetPiece(game, rank + 1, file + move_dir), color)) {
 				unsigned char to_rank = rank + 1;
 				unsigned char to_file = file + move_dir;
 				if ((color == WHITE && (to_file) == 7) || (color == BLACK && (to_file) == 0)) {
@@ -460,7 +461,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 			}
 
 			// En Passant	
-			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file) && GetPiece(game, rank - 1, file)->color != color && GetPiece(game, rank - 1, file)->type == PAWN) {
+			if (LocIsOnBoard(rank - 1, file + move_dir) && HasPiece(game, rank - 1, file) && !IsColor(GetPiece(game, rank - 1, file), color) && IsType(GetPiece(game, rank - 1, file), PAWN)) {
 				Move *lastMove = game->lastMove;
 				if (lastMove->from_rank == rank - 1 && lastMove->from_file == file + (move_dir * 2) && lastMove->to_rank == rank - 1 && lastMove->to_file == file) {
 					unsigned char to_rank = rank - 1;
@@ -479,7 +480,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}
 			}
 
-			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file) && GetPiece(game, rank + 1, file)->color != color && GetPiece(game, rank + 1, file)->type == PAWN) {
+			if (LocIsOnBoard(rank + 1, file + move_dir) && HasPiece(game, rank + 1, file) && !IsColor(GetPiece(game, rank + 1, file), color) && IsType(GetPiece(game, rank + 1, file), PAWN)) {
 				Move *lastMove = game->lastMove;
 				if (lastMove->from_rank == rank + 1 && lastMove->from_file == file + (move_dir * 2) && lastMove->to_rank == rank + 1 && lastMove->to_file == file) {
 					unsigned char to_rank = rank + 1;
@@ -526,7 +527,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 						if (HasPiece(game, to_rank, to_file)) {
 							Piece *piece = GetPiece(game, to_rank, to_file);
 
-							if (piece->color != color) {
+							if (!IsColor(piece, color)) {
 								AddMove(legalMoves, CreateMove(rank, file, to_rank, to_file));
 								break;
 							}
@@ -558,9 +559,8 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 										 {-1, -2} };
 			
 			for (int i = 0; i < 8; i++) {
-				if (LocIsOnBoard(rank + possibleMoves[i][0], file + possibleMoves[i][1]) && ((!HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1])) || (HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1]) && GetPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1])->color != color))) {
+				if (LocIsOnBoard(rank + possibleMoves[i][0], file + possibleMoves[i][1]) && ((!HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1])) || (HasPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1]) && !IsColor(GetPiece(game, rank + possibleMoves[i][0], file + possibleMoves[i][1]), color)))) {
 					AddMove(legalMoves, CreateMove(rank, file, rank + possibleMoves[i][0], file + possibleMoves[i][1]));
-				
 				}
 			}
 
@@ -592,7 +592,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 						if (HasPiece(game, to_rank, to_file)) {
 							Piece *piece = GetPiece(game, to_rank, to_file);
 
-							if (piece->color != color) {
+							if (!IsColor(piece, color)) {
 								AddMove(legalMoves, CreateMove(rank, file, to_rank, to_file));
 								break;
 							}
@@ -655,7 +655,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 						if (HasPiece(game, to_rank, to_file)) {
 							Piece *piece = GetPiece(game, to_rank, to_file);
 
-							if (piece->color != color) {
+							if (!IsColor(piece, color)) {
 								AddMove(legalMoves, CreateMove(rank, file, to_rank, to_file));
 								break;
 							}
@@ -679,7 +679,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 		{
 			for (int i = -1; i < 2; i++) {
 				for (int j = -1; j < 2; j++) {
-					if (LocIsOnBoard(rank + i, file + j) && ((!HasPiece(game, rank + i, file + j)) || (HasPiece(game, rank + i, file + j) && GetPiece(game, rank + i, file + j)->color != color))) {
+					if (LocIsOnBoard(rank + i, file + j) && ((!HasPiece(game, rank + i, file + j)) || (HasPiece(game, rank + i, file + j) && !IsColor(GetPiece(game, rank + i, file + j), color)))) {
 						AddMove(legalMoves, CreateMove(rank, file, rank + i, file + j));
 					}
 				}
@@ -690,7 +690,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				Piece *king = GetPiece(game, rank, file);
 
 				
-				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && GetPiece(game, rank + 3, file)->type == ROOK && GetPiece(game, rank + 3, file)->color == color && GetPiece(game, rank + 3, file)->moveCount == 0) {
+				if (king->moveCount == 0 && HasPiece(game, rank + 3, file) && IsType(GetPiece(game, rank + 3, file), ROOK) && IsColor(GetPiece(game, rank + 3, file), color) && GetPiece(game, rank + 3, file)->moveCount == 0) {
 					if (!HasPiece(game, rank + 1, file) && !HasPiece(game, rank + 2, file)) {
 						
 						// printf("Running right side castle check.\n");
@@ -722,7 +722,7 @@ MLIST *GenerateLegalMoves(Game *game, unsigned char rank, unsigned char file, un
 				}
 
 				
-				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && GetPiece(game, rank - 4, file)->type == ROOK && GetPiece(game, rank - 4, file)->color == color && GetPiece(game, rank - 4, file)->moveCount == 0) {
+				if (king->moveCount == 0 && HasPiece(game, rank - 4, file) && IsType(GetPiece(game, rank - 4, file), ROOK) && IsColor(GetPiece(game, rank - 4, file), color) && GetPiece(game, rank - 4, file)->moveCount == 0) {
 					if (!HasPiece(game, rank - 1, file) && !HasPiece(game, rank - 2, file) && !HasPiece(game, rank - 3, file)) {
 						
 						// printf("Running left side castle check.\n");
