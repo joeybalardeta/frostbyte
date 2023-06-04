@@ -10,6 +10,7 @@ Piece *CreatePiece(unsigned char color, unsigned char type) {
 	return piece;
 }
 
+
 Piece *ClonePiece(Piece *piece) {
 	if (piece == NULL) {
 		return NULL;
@@ -23,6 +24,17 @@ Piece *ClonePiece(Piece *piece) {
 
 	return clonedPiece;
 }
+
+
+char IsColor(Piece *piece, unsigned char color) {
+	return piece->color == color;
+}
+
+
+char IsType(Piece *piece, unsigned char type) {
+	return piece->type == type;
+}
+
 
 void DeletePiece(Piece *piece) {
 	if (piece) {

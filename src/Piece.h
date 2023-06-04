@@ -22,6 +22,10 @@ Piece *CreatePiece(unsigned char color, unsigned char type);
 
 Piece *ClonePiece(Piece *piece);
 
+char IsColor(Piece *piece, unsigned char color);
+
+char IsType(Piece *piece, unsigned char type);
+
 void DeletePiece(Piece *piece);
 
 void PromotePiece(Piece *piece, unsigned char type);
